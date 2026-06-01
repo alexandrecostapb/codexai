@@ -22,5 +22,6 @@ public class MainActivity extends AppCompatActivity {
         });
         String nome = "Alexandre";
         String texto = "Olá!";
+        String nome1 = "Arlindo";
     }
 }
