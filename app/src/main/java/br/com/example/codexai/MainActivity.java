@@ -23,5 +23,6 @@ public class MainActivity extends AppCompatActivity {
 
         String texto = "Olá!";
         String nome2 = "Kauã";
+        String nome1 = "Arlindo";
     }
 }
