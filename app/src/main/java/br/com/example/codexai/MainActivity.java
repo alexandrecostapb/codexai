@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         String nome = "Alexandre Costa";
+        String novoNome = "Alex";
         String texto = "Olá!";
         String nome1 = "Arlindo";
     }
