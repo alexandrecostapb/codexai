@@ -21,8 +21,5 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        String texto = "Olá!";
-        String nome2 = "Kauã";
-        String nome1 = "Arlindo";
     }
 }
