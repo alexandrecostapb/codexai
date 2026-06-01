@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        String nome = "Alexandre";
+        String nome = "Alexandre Costa";
         String texto = "Olá!";
         String nome1 = "Arlindo";
     }
