@@ -47,8 +47,8 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
             super(itemView);
 
 
-            /*texto = itemView.findViewById(R.id.textoMensagem);
-            imagem = itemView.findViewById(R.id.imagemMensagem);*/ //fazer a linkagem dos componentes depois
+            texto = itemView.findViewById(R.id.textoMensagem);
+            imagem = itemView.findViewById(R.id.imagemMensagem); //fazer a linkagem dos componentes depois
         }
     }
 

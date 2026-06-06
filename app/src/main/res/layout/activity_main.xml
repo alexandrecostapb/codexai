@@ -6,22 +6,131 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient">
     tools:context=".MainActivity">
 
-    <!-- chat  -->
+    <!-- Tela principal -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/tela_do_chat"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/gradient"></androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="match_parent">
 
-    <!-- historico  -->
+        <!-- Botão Home -->
+        <Button
+            android:id="@+id/btnHistorico"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="≡"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="12dp"/>
+
+        <!-- Lista de mensagens -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mensagemRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:padding="8dp"
+            app:layout_constraintBottom_toTopOf="@id/promptEditText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnHistorico" />
+
+        <!-- Preview da imagem -->
+        <ImageView
+            android:id="@+id/imagemPreview"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="8dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/promptEditText" />
+
+        <!-- Campo de texto -->
+
+        <!-- Botão imagem -->
+
+        <!-- Botão enviar -->
+
+        <EditText
+            android:id="@+id/promptEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Pergunte qualquer coisa..."
+            android:minWidth="100dp"
+            android:minHeight="50dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:fontFamily="@font/inter_regular"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/imagemButton"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <Button
+            android:id="@+id/imagemButton"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="12dp"
+            android:text="Imagem"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/enviarButton" />
+
+        <Button
+            android:id="@+id/enviarButton"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:text="Enviar"
+            android:textSize="12sp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Menu lateral (Drawer) -->
     <LinearLayout
         android:id="@+id/menu_do_historico"
         android:layout_width="250dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:orientation="vertical"
-        android:background="#1F2E48">
+        android:background="#1F2E48"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnNovoChat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:background="@drawable/bg_novo_chat_button"
+            android:backgroundTint="@null"
+            android:text="+ Novo Chat" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#FFFFFF"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_margin="18dp"
+            android:background="@drawable/bg_lista_chats">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerHistorico"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
     </LinearLayout>
+
 </androidx.drawerlayout.widget.DrawerLayout>
