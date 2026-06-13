@@ -20,7 +20,7 @@ import okhttp3.Response;
 public class OpenRouterUtil {
     private static final String POE_API_KEY = ""; // Aqui você insere sua própria API
     private static final String BASE_URL = "https://openrouter.ai/api/v1/chat/completions"; // URL padrão da API
-    private static final String MODEL = "openrouter/auto"; // Aqui você insere o nome da IA que vai ser utilizada
+    private static final String MODEL = "openai/gpt-4o-mini"; // Aqui você insere o nome da IA que vai ser utilizada
 
     private final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
@@ -97,6 +97,8 @@ public class OpenRouterUtil {
             body.put("model", MODEL);
             body.put("messages", messagesArray);
 
+            android.util.Log.d("JSON_ENVIADO", body.toString());
+
             RequestBody requestBody = RequestBody.create(
                     body.toString(),
                     MediaType.parse("application/json; charset=utf-8")
@@ -120,6 +122,8 @@ public class OpenRouterUtil {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     String respostaJson = response.body().string();
+
+                    android.util.Log.d("OPENROUTER_RESPOSTA", respostaJson);
 
                     if (!response.isSuccessful()) {
                         callback.onError("Erro HTTP: " + response.code());

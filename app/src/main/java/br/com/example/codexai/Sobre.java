@@ -1,6 +1,7 @@
 package br.com.example.codexai;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -25,6 +26,15 @@ public class Sobre extends AppCompatActivity {
             return insets;
         });
         btnHomeVoltar = findViewById(R.id.btnVoltar);
+
+
+        getWindow().setStatusBarColor(
+                Color.parseColor("#0A111A")
+        );
+        getWindow().setNavigationBarColor(
+                Color.parseColor("#344468")
+        );
+
         btnHomeVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -5,13 +5,11 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import com.google.mlkit.vision.text.TextRecognition;
-import com.google.mlkit.vision.text.Text;
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
 import android.util.Base64;
 import android.view.View;
@@ -21,14 +19,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import androidx.core.content.ContextCompat;
 
+import androidx.core.content.ContextCompat;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
@@ -36,57 +31,78 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.mlkit.vision.text.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+
 import androidx.core.content.FileProvider;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
-import com.google.mlkit.vision.common.InputImage;
-import com.google.mlkit.vision.text.TextRecognition;
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
-
-
 import java.util.ArrayList;
+import java.util.List;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
+import com.google.mlkit.vision.common.InputImage;
 
 public class MainActivity extends AppCompatActivity {
     private ImageButton btnHistorico;
-    private ImageButton btnSobre;
     private LinearLayout menuHistorico;
     private ImageButton enviarButton;
     private ImageButton imagemButton;
-    private Button btnNovoChat;
+    private MaterialButton btnNovoChat;
+
     private EditText promptEditText;
     private ImageView imagemPreview;
+
+
     private RecyclerView mensagemRecyclerView;
+
     private ArrayList<Conversa> historicoConversas;
     private Conversa conversaAtual;
+
+
     private MensagemAdapter mensagemAdapter;
     private ArrayList<Mensagem> mensagens;
+
+
     private OpenRouterUtil openRouterUtil;
+
     private RecyclerView recyclerHistorico;
     private HistoricoAdapter historicoAdapter;
+
+
     private Bitmap imagemSelecionada;
+
     private DrawerLayout drawerLayout;
     private String caminhoFoto;
+
+    private BancoDeDados bancoDeDados;
+
     private static final int CAMERA_REQUEST = 1;
     private static final int GALERIA_REQUEST = 2;
     private static final int CAMERA_PERMISSION = 100;
+
     private boolean enviando = false;
+
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // 2. LINK DAS VIEWS PRIMEIRO
 
         btnHistorico = findViewById(R.id.btnHistorico);
-        btnSobre = findViewById(R.id.btnSobre);
         menuHistorico = findViewById(R.id.menu_do_historico);
         enviarButton = findViewById(R.id.enviarButton);
         imagemButton = findViewById(R.id.imagemButton);
@@ -100,19 +116,124 @@ public class MainActivity extends AppCompatActivity {
 
         mensagemRecyclerView = findViewById(R.id.mensagemRecyclerView);
 
+        getWindow().setStatusBarColor(
+                Color.parseColor("#0A111A")
+        );
+
+        getWindow().setNavigationBarColor(
+                Color.parseColor("#344468")
+        );
+
+        bancoDeDados =
+                BancoDeDados.getDatabase(this);
+
         // 3. LISTAS (OBRIGATÓRIO ANTES DOS ADAPTERS)
-        historicoConversas = carregarConversas();
+        historicoConversas =
+                new ArrayList<>(
+                        bancoDeDados
+                                .conversaDao()
+                                .listarTodas()
+                );
         mensagens = new ArrayList<>();
         conversaAtual = null;
 
         // 4. RECYCLER HISTÓRICO
         recyclerHistorico.setLayoutManager(new LinearLayoutManager(this));
+
         historicoAdapter = new HistoricoAdapter(
                 historicoConversas,
+
                 position -> abrirConversa(
                         historicoConversas.get(position)
-                )
+                ),
+
+                new HistoricoAdapter.OnItemLongClickListener() {
+
+                    @Override
+                    public void onEditar(int position) {
+
+                        View view = getLayoutInflater()
+                                .inflate(R.layout.dialog_renomear, null);
+
+                        TextInputEditText editText =
+                                view.findViewById(R.id.editNomeChat);
+
+                        editText.setText(
+                                historicoConversas.get(position).getTitulo()
+                        );
+
+                        AlertDialog dialog = new AlertDialog.Builder(
+                                MainActivity.this
+                        )
+                                .setTitle("Renomear chat")
+                                .setView(view)
+                                .setPositiveButton("Salvar", (d, which) -> {
+
+                                    String novoNome =
+                                            editText.getText()
+                                                    .toString()
+                                                    .trim();
+
+                                    if (!novoNome.isEmpty()) {
+
+                                        Conversa conversa =
+                                                historicoConversas.get(position);
+
+                                        conversa.setTitulo(novoNome);
+
+                                        bancoDeDados
+                                                .conversaDao()
+                                                .atualizar(conversa);
+
+                                        historicoAdapter.notifyItemChanged(position);
+                                        historicoAdapter.limparSelecao();
+                                    }
+
+                                })
+                                .setNegativeButton("Cancelar", null)
+                                .create();
+
+                        dialog.show();
+
+                        dialog.getWindow().setBackgroundDrawableResource(
+                                R.drawable.dialog_background
+                        );
+
+
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                                .setTextColor(Color.parseColor("#FFFFFF"));
+
+                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                                .setTextColor(Color.parseColor("#FFFFFF"));
+                    }
+
+                    @Override
+                    public void onExcluir(int position) {
+
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("Excluir conversa")
+                                .setMessage("Deseja realmente excluir?")
+                                .setPositiveButton("Sim", (dialog, which) -> {
+
+                                    Conversa conversa =
+                                            historicoConversas.get(position);
+
+                                    bancoDeDados
+                                            .conversaDao()
+                                            .remover(conversa);
+
+                                    historicoConversas.remove(position);
+
+                                    historicoAdapter.notifyItemRemoved(position);
+                                    historicoAdapter.limparSelecao();
+
+                                })
+                                .setNegativeButton("Não", null)
+                                .show();
+                    }
+                }
         );
+
         recyclerHistorico.setAdapter(historicoAdapter);
 
         // 5. CHAT RECYCLER
@@ -121,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
                         "Uma IA criada para te ajudar a aprender programação de forma simples.\n" +
                         "Pode me perguntar qualquer coisa!";
 
-        mensagens.add(new Mensagem(mensagemInicial,false));
+        mensagens.add(new Mensagem(mensagemInicial, false));
         mensagemAdapter = new MensagemAdapter(mensagens, this);
         mensagemRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mensagemRecyclerView.setAdapter(mensagemAdapter);
@@ -137,140 +258,20 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
-        btnSobre.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, Sobre.class);
-            startActivity(intent);
-        });
 
         imagemButton.setOnClickListener(v -> escolherImagem());
+
         enviarButton.setOnClickListener(v -> enviarMensagem());
-        btnNovoChat.setOnClickListener(v -> novoChat());
+
+        btnNovoChat.setOnClickListener(v -> prepararNovoChat());
     }
 
 
     private void atualizarHistorico() {
         historicoAdapter.notifyDataSetChanged();
-        salvarConversas();
+        //salvarConversas();
     }
 
-    private void salvarConversas() {
-        try {
-            JSONArray conversasArray = new JSONArray();
-            for (Conversa conversa : historicoConversas) {
-                JSONObject conversaObj = new JSONObject();
-                conversaObj.put(
-                        "titulo",
-                        conversa.getTitulo()
-                );
-                JSONArray mensagensArray =
-                        new JSONArray();
-
-                for (Mensagem msg :
-                        conversa.getMensagens()) {
-
-                    JSONObject msgObj =
-                            new JSONObject();
-
-                    msgObj.put(
-                            "texto",
-                            msg.getTexto()
-                    );
-
-                    msgObj.put(
-                            "usuario",
-                            msg.isUsuario()
-                    );
-
-                    mensagensArray.put(msgObj);
-                }
-
-                conversaObj.put(
-                        "mensagens",
-                        mensagensArray
-                );
-
-                conversasArray.put(conversaObj);
-            }
-            getSharedPreferences(
-                    "CHATS",
-                    MODE_PRIVATE
-            )
-                    .edit()
-                    .putString(
-                            "historico",
-                            conversasArray.toString()
-                    )
-                    .apply();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private ArrayList<Conversa> carregarConversas() {
-        ArrayList<Conversa> lista =
-                new ArrayList<>();
-
-        try {
-            String json =
-                    getSharedPreferences(
-                            "CHATS",
-                            MODE_PRIVATE
-                    )
-                            .getString(
-                                    "historico",
-                                    ""
-                            );
-
-            if (json.isEmpty()) {
-                return lista;
-            }
-            JSONArray conversasArray =
-                    new JSONArray(json);
-
-            for (int i = 0;
-                 i < conversasArray.length();
-                 i++) {
-
-                JSONObject conversaObj =
-                        conversasArray.getJSONObject(i);
-
-                Conversa conversa =
-                        new Conversa(
-                                conversaObj.getString(
-                                        "titulo"
-                                )
-                        );
-
-                JSONArray mensagensArray =
-                        conversaObj.getJSONArray(
-                                "mensagens"
-                        );
-
-                for (int j = 0;
-                     j < mensagensArray.length();
-                     j++) {
-
-                    JSONObject msgObj =
-                            mensagensArray.getJSONObject(j);
-
-                    conversa.getMensagens().add(
-                            new Mensagem(
-                                    msgObj.getString("texto"),
-                                    msgObj.getBoolean("usuario")
-                            )
-                    );
-                }
-
-                lista.add(conversa);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return lista;
-    }
 
     private void escolherImagem() {
 
@@ -282,9 +283,9 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{"Câmera", "Galeria"},
                 (dialog, which) -> {
 
-                    if(which == 0){
+                    if (which == 0) {
                         abrirCamera();
-                    }else{
+                    } else {
 
                         Intent galeriaIntent = new Intent(
                                 Intent.ACTION_PICK,
@@ -301,16 +302,46 @@ public class MainActivity extends AppCompatActivity {
 
         builder.show();
     }
-    private String bitmapParaBase64(Bitmap bitmap){
 
-        if(bitmap == null) return null;
+    private void mostrarMenuChat(int position) {
+        String[] opcoes = {
+                "Renomear",
+                "Excluir"
+        };
+
+        new AlertDialog.Builder(this)
+                .setTitle(historicoConversas.get(position).getTitulo())
+                .setItems(opcoes, (dialog, which) -> {
+
+                    if(which == 0){
+                        // renomear
+                    }
+
+                    if(which == 1){
+                        // excluir
+                    }
+
+                })
+                .show();
+    }
+
+    private String bitmapParaBase64(Bitmap bitmap) {
+
+        if (bitmap == null) return null;
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+
         byte[] bytes = baos.toByteArray();
+
         return Base64.encodeToString(bytes, Base64.NO_WRAP);
     }
+
     private File criarArquivoImagem() throws IOException {
+
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
         String nomeArquivo = "JPEG_" + timeStamp + "_";
 
         File storageDir = getExternalFilesDir(null);
@@ -322,23 +353,26 @@ public class MainActivity extends AppCompatActivity {
         caminhoFoto = image.getAbsolutePath();
         return image;
     }
-    private void abrirCamera(){
+
+    private void abrirCamera() {
         Toast.makeText(this, "Abrindo câmera", Toast.LENGTH_SHORT).show();
-        if(ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION);
             return;
         }
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(cameraIntent.resolveActivity(getPackageManager()) != null){
+
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
 
             File fotoArquivo = null;
-            try{
+
+            try {
                 fotoArquivo = criarArquivoImagem();
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            if(fotoArquivo != null){
+            if (fotoArquivo != null) {
 
                 Uri fotoURI = FileProvider.getUriForFile(
                         this,
@@ -354,6 +388,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void novoChat() {
+
+        Conversa conversa =
+                new Conversa("");
+
+        long id =
+                bancoDeDados
+                        .conversaDao()
+                        .inserir(conversa);
+
+        conversa.setId((int) id);
+
+        conversa.setTitulo(
+                "Chat " + id
+        );
+
+        bancoDeDados
+                .conversaDao()
+                .atualizar(conversa);
+
+        conversaAtual = conversa;
+
+        historicoConversas.add(0, conversa);
+
+        historicoAdapter.notifyDataSetChanged();
+
+        mensagens = new ArrayList<>();
+
+        mensagemAdapter = new MensagemAdapter(
+                mensagens,
+                this
+        );
+
+        mensagemRecyclerView.setAdapter(
+                mensagemAdapter
+        );
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    private void prepararNovoChat(){
 
         conversaAtual = null;
 
@@ -371,11 +445,54 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.closeDrawer(GravityCompat.START);
     }
 
-    public void abrirConversa(Conversa conversa){
+    public void abrirConversa(Conversa conversa) {
 
         conversaAtual = conversa;
 
-        mensagens = conversaAtual.getMensagens();
+        mensagens = new ArrayList<>();
+
+        List<MensagemEntity> listaBanco =
+                bancoDeDados
+                        .mensagemDao()
+                        .buscarMensagens(
+                                conversaAtual.getId()
+                        );
+
+        for(MensagemEntity msg : listaBanco){
+
+            if(msg.getImagemBase64() != null){
+
+                byte[] bytes =
+                        Base64.decode(
+                                msg.getImagemBase64(),
+                                Base64.DEFAULT
+                        );
+
+                Bitmap bitmap =
+                        BitmapFactory.decodeByteArray(
+                                bytes,
+                                0,
+                                bytes.length
+                        );
+
+                mensagens.add(
+                        new Mensagem(
+                                bitmap,
+                                msg.getTexto(),
+                                msg.isUsuario()
+                        )
+                );
+
+            }else{
+
+                mensagens.add(
+                        new Mensagem(
+                                msg.getTexto(),
+                                msg.isUsuario()
+                        )
+                );
+            }
+        }
 
         mensagemAdapter = new MensagemAdapter(
                 mensagens,
@@ -392,54 +509,79 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode != RESULT_OK) return;
+        if (resultCode != RESULT_OK) return;
         try {
-            if(requestCode == CAMERA_REQUEST){
+            if (requestCode == CAMERA_REQUEST) {
                 File imgFile = new File(caminhoFoto);
 
-                if(imgFile.exists()){
+                if (imgFile.exists()) {
                     imagemSelecionada = MediaStore.Images.Media.getBitmap(
                             getContentResolver(),
                             Uri.fromFile(imgFile)
                     );
                 }
-            }
-            else if(requestCode == GALERIA_REQUEST){
+            } else if (requestCode == GALERIA_REQUEST) {
                 Uri uri = data.getData();
-                if(uri != null){
+                if (uri != null) {
                     imagemSelecionada = MediaStore.Images.Media.getBitmap(
-                            getContentResolver(),uri);
+                            getContentResolver(), uri);
                 }
             }
 
 
-            if(imagemSelecionada != null){
+            if (imagemSelecionada != null) {
                 imagemPreview.setImageBitmap(imagemSelecionada);
                 imagemPreview.setVisibility(ImageView.VISIBLE);
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this,"Erro ao carregar imagem",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Erro ao carregar imagem", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void enviarMensagem() {
+
+        if(conversaAtual == null){
+            novoChat();
+        }
         String textoDigitado = promptEditText.getText().toString().trim();
+
 
         if (textoDigitado.isEmpty() && imagemSelecionada == null) {
             Toast.makeText(this, "Digite algo ou selecione uma imagem", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if(imagemSelecionada != null){
+
+        if (imagemSelecionada != null) {
             mensagens.add(new Mensagem(imagemSelecionada, textoDigitado, true));
-        }
-        else{
-            mensagens.add(new Mensagem(textoDigitado,true));
+        } else {
+            mensagens.add(new Mensagem(textoDigitado, true));
         }
 
-        mensagemAdapter.notifyItemInserted(mensagens.size()-1);
-        mensagemRecyclerView.scrollToPosition(mensagens.size()-1);
+        String imagemBase64 = null;
+
+        if(imagemSelecionada != null){
+            imagemBase64 =
+                    bitmapParaBase64(
+                            imagemSelecionada
+                    );
+        }
+
+        MensagemEntity mensagemEntity =
+                new MensagemEntity(
+                        conversaAtual.getId(),
+                        textoDigitado,
+                        true,
+                        imagemBase64
+                );
+
+        bancoDeDados
+                .mensagemDao()
+                .inserir(mensagemEntity);
+
+        mensagemAdapter.notifyItemInserted(mensagens.size() - 1);
+        mensagemRecyclerView.scrollToPosition(mensagens.size() - 1);
 
         enviarParaIA(textoDigitado, imagemSelecionada);
 
@@ -449,34 +591,42 @@ public class MainActivity extends AppCompatActivity {
 
         //salvarChats(); linkar depois
 
+
     }
 
     private void enviarParaIA(String texto, Bitmap imagem) {
 
-        if(enviando) return;
+        if (enviando) return;
         enviando = true;
 
-        mensagens.add(new Mensagem("⏳ Pensando...", false));
-        mensagemAdapter.notifyItemInserted(mensagens.size()-1);
+        mensagens.add(new Mensagem("Pensando...", false));
+        mensagemAdapter.notifyItemInserted(mensagens.size() - 1);
 
         String base64Imagem = bitmapParaBase64(imagem);
+
+        android.util.Log.d(
+                "IMG_TEST",
+                base64Imagem == null
+                        ? "Imagem NULL"
+                        : "Imagem recebida. Tamanho: " + base64Imagem.length()
+        );
 
         ArrayList<Mensagem> listaParaIA = new ArrayList<>();
 
         int contador = 0;
 
-        for(int i = mensagens.size() - 1; i >= 0; i--){
+        for (int i = mensagens.size() - 1; i >= 0; i--) {
 
             Mensagem m = mensagens.get(i);
 
-            if(m.getTexto() != null && m.getTexto().equals("⏳ Pensando...")){
+            if (m.getTexto() != null && m.getTexto().equals("Pensando...")) {
                 continue;
             }
 
             listaParaIA.add(0, m);
             contador++;
 
-            if(contador == 10){
+            if (contador == 10) {
                 break;
             }
         }
@@ -489,8 +639,19 @@ public class MainActivity extends AppCompatActivity {
 
                 runOnUiThread(() -> {
 
-                    mensagens.set(mensagens.size()-1, new Mensagem(resposta,false));
-                    mensagemAdapter.notifyItemChanged(mensagens.size()-1);
+                    mensagens.set(mensagens.size() - 1, new Mensagem(resposta, false));
+                    MensagemEntity msgIA =
+                            new MensagemEntity(
+                                    conversaAtual.getId(),
+                                    resposta,
+                                    false,
+                                    null
+                            );
+
+                    bancoDeDados
+                            .mensagemDao()
+                            .inserir(msgIA);
+                    mensagemAdapter.notifyItemChanged(mensagens.size() - 1);
 
                     //salvarChats(); linkar dps
                     enviando = false;
@@ -503,8 +664,8 @@ public class MainActivity extends AppCompatActivity {
 
                 runOnUiThread(() -> {
 
-                    mensagens.set(mensagens.size()-1, new Mensagem("Erro: "+erro,false));
-                    mensagemAdapter.notifyItemChanged(mensagens.size()-1);
+                    mensagens.set(mensagens.size() - 1, new Mensagem("Erro: " + erro, false));
+                    mensagemAdapter.notifyItemChanged(mensagens.size() - 1);
 
                     //salvarChats(); linkar dps
                     enviando = false;
@@ -513,6 +674,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onPause() {
         super.onPause();
