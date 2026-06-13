@@ -12,6 +12,8 @@ import android.provider.MediaStore;
 import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
+
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
+import androidx.core.content.ContextCompat;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +36,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.mlkit.vision.text.Text;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import androidx.core.content.FileProvider;
@@ -53,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout menuHistorico;
     private Button enviarButton;
     private Button imagemButton;
-
     private Button btnNovoChat;
 
     private EditText promptEditText;
@@ -79,14 +82,13 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap imagemSelecionada;
 
     private DrawerLayout drawerLayout;
-
-
     private String caminhoFoto;
-
 
     private static final int CAMERA_REQUEST = 1;
     private static final int GALERIA_REQUEST = 2;
     private static final int CAMERA_PERMISSION = 100;
+
+    private boolean enviando = false;
 
 
     @Override
@@ -94,13 +96,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); //depois definir a activity aqui
-
-
-
-        // =========================
+        setContentView(R.layout.activity_main);
         // 2. LINK DAS VIEWS PRIMEIRO
-        // =========================
+
         btnHistorico = findViewById(R.id.btnHistorico);
         menuHistorico = findViewById(R.id.menu_do_historico);
         enviarButton = findViewById(R.id.enviarButton);
@@ -115,16 +113,12 @@ public class MainActivity extends AppCompatActivity {
 
         mensagemRecyclerView = findViewById(R.id.mensagemRecyclerView);
 
-        // =========================
         // 3. LISTAS (OBRIGATÓRIO ANTES DOS ADAPTERS)
-        // =========================
         historicoConversas = carregarConversas();
         mensagens = new ArrayList<>();
         conversaAtual = null;
 
-        // =========================
         // 4. RECYCLER HISTÓRICO
-        // =========================
         recyclerHistorico.setLayoutManager(new LinearLayoutManager(this));
 
         historicoAdapter = new HistoricoAdapter(
@@ -136,21 +130,21 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerHistorico.setAdapter(historicoAdapter);
 
-        // =========================
         // 5. CHAT RECYCLER
-        // =========================
+        String mensagemInicial =
+                "Olá, eu sou o CodexAI!\n" +
+                        "Uma IA criada para te ajudar a aprender programação de forma simples.\n" +
+                        "Pode me perguntar qualquer coisa!";
+
+        mensagens.add(new Mensagem(mensagemInicial,false));
         mensagemAdapter = new MensagemAdapter(mensagens, this);
         mensagemRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mensagemRecyclerView.setAdapter(mensagemAdapter);
 
-        // =========================
         // 6. OBJETO IA
-        // =========================
         openRouterUtil = new OpenRouterUtil();
 
-        // =========================
         // 7. LISTENERS
-        // =========================
         btnHistorico.setOnClickListener(v -> {
             if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                 drawerLayout.closeDrawer(GravityCompat.START);
@@ -303,97 +297,75 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void escolherImagem(){
-
-
-        String[] opcoes = {"Câmera","Galeria"};
-
+    private void escolherImagem() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
         builder.setTitle("Selecionar imagem");
 
+        builder.setItems(
+                new String[]{"Câmera", "Galeria"},
+                (dialog, which) -> {
 
-        builder.setItems(opcoes,(dialog,i)->{
+                    if(which == 0){
+                        abrirCamera();
+                    }else{
 
+                        Intent galeriaIntent = new Intent(
+                                Intent.ACTION_PICK,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                        );
 
-            if(i==0){
-
-
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-
-
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.CAMERA},
-                            CAMERA_PERMISSION);
-
-
-                } else {
-
-
-                    abrirCamera();
-
-
+                        startActivityForResult(
+                                galeriaIntent,
+                                GALERIA_REQUEST
+                        );
+                    }
                 }
-
-
-            }else{
-
-
-                Intent galeria = new Intent(Intent.ACTION_PICK,
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-
-                startActivityForResult(galeria,GALERIA_REQUEST);
-
-
-            }
-
-
-        });
-
+        );
 
         builder.show();
     }
 
+    private String bitmapParaBase64(Bitmap bitmap){
 
+        if(bitmap == null) return null;
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+
+        byte[] bytes = baos.toByteArray();
+
+        return Base64.encodeToString(bytes, Base64.NO_WRAP);
+    }
     private File criarArquivoImagem() throws IOException {
-
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
-
         String nomeArquivo = "JPEG_" + timeStamp + "_";
 
-
         File storageDir = getExternalFilesDir(null);
-
-
         File image = File.createTempFile(
                 nomeArquivo,
                 ".jpg",
                 storageDir
         );
-
-
         caminhoFoto = image.getAbsolutePath();
-
-
         return image;
     }
 
-
     private void abrirCamera(){
-
-
+        Toast.makeText(this, "Abrindo câmera", Toast.LENGTH_SHORT).show();
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION);
+            return;
+        }
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
 
         if(cameraIntent.resolveActivity(getPackageManager()) != null){
 
-
             File fotoArquivo = null;
-
 
             try{
                 fotoArquivo = criarArquivoImagem();
@@ -401,9 +373,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-
             if(fotoArquivo != null){
-
 
                 Uri fotoURI = FileProvider.getUriForFile(
                         this,
@@ -411,45 +381,12 @@ public class MainActivity extends AppCompatActivity {
                         fotoArquivo
                 );
 
-
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, fotoURI);
-
 
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
             }
         }
     }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-
-        if(requestCode == CAMERA_PERMISSION){
-
-
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
-
-                abrirCamera();
-
-
-            }else{
-
-
-                Toast.makeText(this,"Permissão da câmera negada",Toast.LENGTH_SHORT).show();
-
-
-            }
-
-
-        }
-    }
-
-
 
     private void novoChat() {
 
@@ -489,75 +426,37 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-
         super.onActivityResult(requestCode, resultCode, data);
-
-
         if(resultCode != RESULT_OK) return;
-
-
         try {
-
-
             if(requestCode == CAMERA_REQUEST){
-
-
                 File imgFile = new File(caminhoFoto);
 
-
                 if(imgFile.exists()){
-
-
                     imagemSelecionada = MediaStore.Images.Media.getBitmap(
                             getContentResolver(),
                             Uri.fromFile(imgFile)
                     );
-
-
                 }
             }
-
-
             else if(requestCode == GALERIA_REQUEST){
-
-
                 Uri uri = data.getData();
-
-
                 if(uri != null){
-
-
                     imagemSelecionada = MediaStore.Images.Media.getBitmap(
                             getContentResolver(),uri);
-
-
                 }
-
-
             }
 
 
             if(imagemSelecionada != null){
-
-
                 imagemPreview.setImageBitmap(imagemSelecionada);
                 imagemPreview.setVisibility(ImageView.VISIBLE);
-
-
             }
-
-
         }catch(Exception e){
-
-
             e.printStackTrace();
             Toast.makeText(this,"Erro ao carregar imagem",Toast.LENGTH_SHORT).show();
-
-
         }
     }
-
 
     private void enviarMensagem() {
         String textoDigitado = promptEditText.getText().toString().trim();
@@ -569,154 +468,93 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        if (imagemSelecionada != null) {
-            // OCR da imagem antes de adicionar na tela
-            reconhecerTextoImagem(imagemSelecionada, textoDigitado);
-            return;
+        if(imagemSelecionada != null){
+            mensagens.add(new Mensagem(imagemSelecionada, textoDigitado, true));
+        }
+        else{
+            mensagens.add(new Mensagem(textoDigitado,true));
         }
 
+        mensagemAdapter.notifyItemInserted(mensagens.size()-1);
+        mensagemRecyclerView.scrollToPosition(mensagens.size()-1);
 
-// adiciona mensagem
-        if (conversaAtual == null) {
+        enviarParaIA(textoDigitado, imagemSelecionada);
 
-            conversaAtual = new Conversa(
-                    "Chat " + (historicoConversas.size() + 1)
-            );
-
-            historicoConversas.add(0, conversaAtual);
-
-            mensagens = conversaAtual.getMensagens();
-
-            mensagemAdapter = new MensagemAdapter(
-                    mensagens,
-                    this
-            );
-
-            mensagemRecyclerView.setAdapter(
-                    mensagemAdapter
-            );
-        }
-
-        conversaAtual.getMensagens().add(
-                new Mensagem(textoDigitado, true)
-        );
-
-        mensagemAdapter.notifyItemInserted(
-                conversaAtual.getMensagens().size() - 1
-        );
-        atualizarHistorico();
-        salvarConversas();
-        historicoAdapter.notifyDataSetChanged();
-        mensagemAdapter.notifyItemInserted(mensagens.size() - 1);
-        mensagemRecyclerView.scrollToPosition(mensagens.size() - 1);
-
-
-        enviarParaIA(textoDigitado);
+        imagemPreview.setVisibility(View.GONE);
+        imagemSelecionada = null;
         promptEditText.setText("");
+
+        //salvarChats(); linkar depois
+
+
     }
 
+    private void enviarParaIA(String texto, Bitmap imagem) {
 
-    private void reconhecerTextoImagem(Bitmap bitmap, String textoDigitado) {
-        bitmap = Bitmap.createScaledBitmap(bitmap, 1920, 1920, true);
-        InputImage image = InputImage.fromBitmap(bitmap, 0);
+        if(enviando) return;
+        enviando = true;
 
-
-        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-                .process(image)
-                .addOnSuccessListener(visionText -> {
-
-
-                    StringBuilder textoFinal = new StringBuilder();
-                    for (Text.TextBlock block : visionText.getTextBlocks()) {
-                        for (Text.Line line : block.getLines()) {
-                            textoFinal.append(line.getText()).append("\n");
-                        }
-                    }
-
-
-                    String textoExtraido = textoFinal.toString().trim();
-
-
-                    // Combina texto digitado + OCR
-                    String mensagemFinal = textoDigitado;
-                    if (!textoExtraido.isEmpty()) {
-                        mensagemFinal += "\n\n" + textoExtraido;
-                    }
-
-                    if (conversaAtual == null) {
-
-                        conversaAtual = new Conversa(
-                                "Chat " + (historicoConversas.size() + 1)
-                        );
-
-                        historicoConversas.add(0, conversaAtual);
-
-                        mensagens = conversaAtual.getMensagens();
-                        historicoAdapter.notifyDataSetChanged();
-                        salvarConversas();
-                    }
-
-
-                    // Adiciona a mensagem combinada na tela
-                    mensagens.add(new Mensagem(imagemSelecionada, mensagemFinal, true));
-                    salvarConversas();
-                    mensagemAdapter.notifyItemInserted(mensagens.size() - 1);
-                    mensagemRecyclerView.scrollToPosition(mensagens.size() - 1);
-
-
-                    // Envia para a IA
-                    enviarParaIA(mensagemFinal);
-
-
-                    imagemPreview.setVisibility(View.GONE);
-                    imagemSelecionada = null;
-
-
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Erro ao ler imagem", Toast.LENGTH_SHORT).show();
-                    imagemPreview.setVisibility(View.GONE);
-                    imagemSelecionada = null;
-                });
-    }
-
-
-
-
-    private void enviarParaIA(String texto){
-        // adiciona mensagem de "pensando" depois da última mensagem já adicionada
         mensagens.add(new Mensagem("⏳ Pensando...", false));
-        mensagemAdapter.notifyItemInserted(mensagens.size() - 1);
-        mensagemRecyclerView.scrollToPosition(mensagens.size() - 1);
+        mensagemAdapter.notifyItemInserted(mensagens.size()-1);
 
+        String base64Imagem = bitmapParaBase64(imagem);
 
-        openRouterUtil.enviarMensagem(mensagens, new OpenRouterUtil.PoeCallback() {
-            @Override
-            public void onResponse(String resposta) {
-                runOnUiThread(() -> {
-                    // substitui a mensagem "pensando" pelo resultado
-                    mensagens.set(mensagens.size() - 1, new Mensagem(resposta, false));
-                    salvarConversas();
-                    mensagemAdapter.notifyItemChanged(mensagens.size() - 1);
-                    mensagemRecyclerView.scrollToPosition(mensagens.size() - 1);
-                });
+        ArrayList<Mensagem> listaParaIA = new ArrayList<>();
+
+        int contador = 0;
+
+        for(int i = mensagens.size() - 1; i >= 0; i--){
+
+            Mensagem m = mensagens.get(i);
+
+            if(m.getTexto() != null && m.getTexto().equals("⏳ Pensando...")){
+                continue;
             }
 
+            listaParaIA.add(0, m);
+            contador++;
+
+            if(contador == 10){
+                break;
+            }
+        }
+
+
+        openRouterUtil.enviarMensagem(listaParaIA, base64Imagem, new OpenRouterUtil.PoeCallback() {
+
+            @Override
+            public void onResponse(String resposta) {
+
+                runOnUiThread(() -> {
+
+                    mensagens.set(mensagens.size()-1, new Mensagem(resposta,false));
+                    mensagemAdapter.notifyItemChanged(mensagens.size()-1);
+
+                    //salvarChats(); linkar dps
+                    enviando = false;
+                });
+
+            }
 
             @Override
             public void onError(String erro) {
+
                 runOnUiThread(() -> {
-                    mensagens.set(mensagens.size() - 1, new Mensagem("Erro: " + erro, false));
-                    mensagemAdapter.notifyItemChanged(mensagens.size() - 1);
-                    mensagemRecyclerView.scrollToPosition(mensagens.size() - 1);
+
+                    mensagens.set(mensagens.size()-1, new Mensagem("Erro: "+erro,false));
+                    mensagemAdapter.notifyItemChanged(mensagens.size()-1);
+
+                    //salvarChats(); linkar dps
+                    enviando = false;
                 });
+
             }
         });
-
-
-        promptEditText.setText("");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //salvarChats(); linkar dps
     }
 
-    //teste
 }
-
