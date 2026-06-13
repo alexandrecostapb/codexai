@@ -15,14 +15,12 @@ public class CodexAIViewModel extends AndroidViewModel {
             @NonNull Application application
     ) {
         super(application);
-
         banco = BancoDeDados.getDatabase(
                 application
         );
     }
 
     // Conversas
-
     public long inserirConversa(
             Conversa conversa
     ){
@@ -38,7 +36,6 @@ public class CodexAIViewModel extends AndroidViewModel {
     }
 
     // Mensagens
-
     public void inserirMensagem(
             MensagemEntity mensagem
     ){

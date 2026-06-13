@@ -47,7 +47,6 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-
         View view;
         if(viewType == TIPO_USUARIO){
             view = LayoutInflater.from(parent.getContext())
@@ -61,19 +60,15 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
-
         Mensagem msg = mensagens.get(position);
-
         if(msg.getImagem() != null){
             holder.imagem.setVisibility(View.VISIBLE);
-
             if(msg.getTexto() != null && !msg.getTexto().isEmpty()){
                 holder.texto.setVisibility(View.VISIBLE);
                 markwon.setMarkdown(holder.texto, msg.getTexto());
             } else {
                 holder.texto.setVisibility(View.GONE);
             }
-
             holder.imagem.setImageBitmap(msg.getImagem());
         } else {
             holder.texto.setVisibility(View.VISIBLE);
