@@ -6,7 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient">
+    android:background="@drawable/gradient"
     tools:context=".MainActivity">
 
     <!-- Tela principal -->
@@ -15,14 +15,40 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Botão Home -->
-        <Button
+        <!-- botão historico -->
+        <ImageButton
             android:id="@+id/btnHistorico"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="≡"
+            android:background="@drawable/bg_botao"
+            android:src="@drawable/baseline_menu_24"
+            app:tint="#FFFFFF"
+            android:padding="14dp"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:contentDescription="Abrir histórico"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_min="48dp"
+            app:layout_constraintHeight_min="48dp"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="12dp"/>
+
+        <!-- botão sobre-->
+        <ImageButton
+            android:id="@+id/btnSobre"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_botao"
+            android:src="@drawable/baseline_info_24"
+            app:tint="#FFFFFF"
+            android:padding="14dp"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:contentDescription="Informações sobre o app"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_min="48dp"
+            app:layout_constraintHeight_min="48dp"
             android:layout_margin="12dp"/>
 
         <!-- Lista de mensagens -->
@@ -49,49 +75,76 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/promptEditText" />
 
-        <!-- Campo de texto -->
+
 
         <!-- Botão imagem -->
+        <ImageButton
+            android:id="@+id/imagemButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            app:layout_constraintWidth_max="48dp"
+            app:layout_constraintDimensionRatio="1:1"
+            android:background="@drawable/bg_botao"
+            android:src="@drawable/outline_add_24"
+            app:tint="#FFFFFF"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            android:clickable="true"
+            android:focusable="true"
+            android:elevation="10dp"
+            android:contentDescription="Selecionar imagem"
+            app:layout_constraintStart_toStartOf="@id/promptEditText"
+            app:layout_constraintEnd_toEndOf="@id/promptEditText"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintTop_toTopOf="@id/promptEditText"
+            app:layout_constraintBottom_toBottomOf="@id/promptEditText"
+            android:layout_marginStart="6dp"/>
 
         <!-- Botão enviar -->
+        <ImageButton
+            android:id="@+id/enviarButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minWidth="42dp"
+            android:background="@drawable/bg_botao"
+            android:src="@drawable/outline_assistant_navigation_24"
+            app:tint="#FFFFFF"
+            android:rotation="45"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            android:clickable="true"
+            android:focusable="true"
+            android:elevation="10dp"
+            android:contentDescription="Enviar mensagem"
+            app:layout_constraintEnd_toEndOf="@id/promptEditText"
+            app:layout_constraintTop_toTopOf="@id/promptEditText"
+            app:layout_constraintBottom_toBottomOf="@id/promptEditText"
+            android:layout_marginEnd="8dp"/>
 
+        <!-- Campo de texto -->
         <EditText
             android:id="@+id/promptEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Pergunte qualquer coisa..."
-            android:minWidth="100dp"
-            android:minHeight="50dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
+            android:hint="Pergunte qualquer coisa"
+            android:textColorHint="#D4DAE2"
+            android:textColor="#FFFFFF"
+            android:minHeight="56dp"
+            android:paddingStart="60dp"
+            android:paddingEnd="60dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:background="@drawable/fundo_chat"
             android:fontFamily="@font/inter_regular"
-            android:textSize="14sp"
+            android:textSize="17sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/imagemButton"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
-        <Button
-            android:id="@+id/imagemButton"
-            android:layout_width="70dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="12dp"
-            android:text="Imagem"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/enviarButton" />
-
-        <Button
-            android:id="@+id/enviarButton"
-            android:layout_width="70dp"
-            android:layout_height="50dp"
-            android:text="Enviar"
-            android:textSize="12sp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginBottom="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Menu lateral (Drawer) -->
@@ -103,14 +156,16 @@
         android:background="#1F2E48"
         android:orientation="vertical">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnNovoChat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:background="@drawable/bg_novo_chat_button"
-            android:backgroundTint="@null"
-            android:text="+ Novo Chat" />
+            android:text="+ Novo Chat"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:fontFamily="@font/inter_regular" />
 
         <View
             android:layout_width="match_parent"

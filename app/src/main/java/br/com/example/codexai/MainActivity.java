@@ -17,6 +17,7 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -53,53 +54,39 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private Button btnHistorico;
+    private ImageButton btnHistorico;
+    private ImageButton btnSobre;
     private LinearLayout menuHistorico;
-    private Button enviarButton;
-    private Button imagemButton;
+    private ImageButton enviarButton;
+    private ImageButton imagemButton;
     private Button btnNovoChat;
-
     private EditText promptEditText;
     private ImageView imagemPreview;
-
-
     private RecyclerView mensagemRecyclerView;
-
     private ArrayList<Conversa> historicoConversas;
     private Conversa conversaAtual;
-
-
     private MensagemAdapter mensagemAdapter;
     private ArrayList<Mensagem> mensagens;
-
-
     private OpenRouterUtil openRouterUtil;
-
     private RecyclerView recyclerHistorico;
     private HistoricoAdapter historicoAdapter;
-
-
     private Bitmap imagemSelecionada;
-
     private DrawerLayout drawerLayout;
     private String caminhoFoto;
-
     private static final int CAMERA_REQUEST = 1;
     private static final int GALERIA_REQUEST = 2;
     private static final int CAMERA_PERMISSION = 100;
-
     private boolean enviando = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // 2. LINK DAS VIEWS PRIMEIRO
 
         btnHistorico = findViewById(R.id.btnHistorico);
+        btnSobre = findViewById(R.id.btnSobre);
         menuHistorico = findViewById(R.id.menu_do_historico);
         enviarButton = findViewById(R.id.enviarButton);
         imagemButton = findViewById(R.id.imagemButton);
@@ -120,14 +107,12 @@ public class MainActivity extends AppCompatActivity {
 
         // 4. RECYCLER HISTÓRICO
         recyclerHistorico.setLayoutManager(new LinearLayoutManager(this));
-
         historicoAdapter = new HistoricoAdapter(
                 historicoConversas,
                 position -> abrirConversa(
                         historicoConversas.get(position)
                 )
         );
-
         recyclerHistorico.setAdapter(historicoAdapter);
 
         // 5. CHAT RECYCLER
@@ -152,11 +137,13 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
+        btnSobre.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, Sobre.class);
+            startActivity(intent);
+        });
 
         imagemButton.setOnClickListener(v -> escolherImagem());
-
         enviarButton.setOnClickListener(v -> enviarMensagem());
-
         btnNovoChat.setOnClickListener(v -> novoChat());
     }
 
@@ -167,20 +154,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void salvarConversas() {
-
         try {
-
             JSONArray conversasArray = new JSONArray();
-
             for (Conversa conversa : historicoConversas) {
-
                 JSONObject conversaObj = new JSONObject();
-
                 conversaObj.put(
                         "titulo",
                         conversa.getTitulo()
                 );
-
                 JSONArray mensagensArray =
                         new JSONArray();
 
@@ -210,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
 
                 conversasArray.put(conversaObj);
             }
-
             getSharedPreferences(
                     "CHATS",
                     MODE_PRIVATE
@@ -228,12 +208,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ArrayList<Conversa> carregarConversas() {
-
         ArrayList<Conversa> lista =
                 new ArrayList<>();
 
         try {
-
             String json =
                     getSharedPreferences(
                             "CHATS",
@@ -247,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
             if (json.isEmpty()) {
                 return lista;
             }
-
             JSONArray conversasArray =
                     new JSONArray(json);
 
@@ -295,8 +272,6 @@ public class MainActivity extends AppCompatActivity {
         return lista;
     }
 
-
-
     private void escolherImagem() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -326,23 +301,16 @@ public class MainActivity extends AppCompatActivity {
 
         builder.show();
     }
-
     private String bitmapParaBase64(Bitmap bitmap){
 
         if(bitmap == null) return null;
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-
         byte[] bytes = baos.toByteArray();
-
         return Base64.encodeToString(bytes, Base64.NO_WRAP);
     }
     private File criarArquivoImagem() throws IOException {
-
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
         String nomeArquivo = "JPEG_" + timeStamp + "_";
 
         File storageDir = getExternalFilesDir(null);
@@ -354,7 +322,6 @@ public class MainActivity extends AppCompatActivity {
         caminhoFoto = image.getAbsolutePath();
         return image;
     }
-
     private void abrirCamera(){
         Toast.makeText(this, "Abrindo câmera", Toast.LENGTH_SHORT).show();
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
@@ -362,11 +329,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
         if(cameraIntent.resolveActivity(getPackageManager()) != null){
 
             File fotoArquivo = null;
-
             try{
                 fotoArquivo = criarArquivoImagem();
             }catch(IOException e){
@@ -461,12 +426,10 @@ public class MainActivity extends AppCompatActivity {
     private void enviarMensagem() {
         String textoDigitado = promptEditText.getText().toString().trim();
 
-
         if (textoDigitado.isEmpty() && imagemSelecionada == null) {
             Toast.makeText(this, "Digite algo ou selecione uma imagem", Toast.LENGTH_SHORT).show();
             return;
         }
-
 
         if(imagemSelecionada != null){
             mensagens.add(new Mensagem(imagemSelecionada, textoDigitado, true));
@@ -485,7 +448,6 @@ public class MainActivity extends AppCompatActivity {
         promptEditText.setText("");
 
         //salvarChats(); linkar depois
-
 
     }
 
