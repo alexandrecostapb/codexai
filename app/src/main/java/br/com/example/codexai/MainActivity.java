@@ -53,6 +53,7 @@ import com.google.mlkit.vision.common.InputImage;
 
 public class MainActivity extends AppCompatActivity {
     private ImageButton btnHistorico;
+    private ImageButton btnHistorico2;
     private ImageButton btnSobre;
     private LinearLayout menuHistorico;
     private ImageButton enviarButton;
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         // 2. LINK DAS VIEWS PRIMEIRO
 
         btnHistorico = findViewById(R.id.btnHistorico);
+        btnHistorico2 = findViewById(R.id.btnHistorico2);
         btnSobre = findViewById(R.id.btnSobre);
         menuHistorico = findViewById(R.id.menu_do_historico);
         enviarButton = findViewById(R.id.enviarButton);
@@ -170,21 +172,28 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onExcluir(int position) {
-                        new AlertDialog.Builder(MainActivity.this)
+                        AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                                 .setTitle("Excluir conversa")
                                 .setMessage("Deseja realmente excluir?")
-                                .setPositiveButton("Sim", (dialog, which) -> {
-                                    Conversa conversa =
-                                            historicoConversas.get(position);
+                                .setPositiveButton("Sim", (d, which) -> {
+                                    Conversa conversa = historicoConversas.get(position);
+
                                     bancoDeDados
                                             .conversaDao()
                                             .remover(conversa);
+
                                     historicoConversas.remove(position);
                                     historicoAdapter.notifyItemRemoved(position);
                                     historicoAdapter.limparSelecao();
                                 })
                                 .setNegativeButton("Não", null)
-                                .show();
+                                .create();
+                        dialog.show();
+                        dialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_background);
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                                .setTextColor(Color.parseColor("#FFFFFF"));
+                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                                .setTextColor(Color.parseColor("#FFFFFF"));
                     }
                 }
         );
@@ -212,6 +221,9 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
+        });
+        btnHistorico2.setOnClickListener(v -> {
+            drawerLayout.closeDrawer(GravityCompat.START);
         });
         btnSobre.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, Sobre.class);
@@ -268,6 +280,20 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .show();
+    }
+
+    private Bitmap reduzirImagem(Bitmap original) {
+        int largura = 800;
+        int altura = (int)
+                (((float) original.getHeight()
+                        / original.getWidth())
+                        * largura);
+        return Bitmap.createScaledBitmap(
+                original,
+                largura,
+                altura,
+                true
+        );
     }
 
     private String bitmapParaBase64(Bitmap bitmap) {
@@ -453,10 +479,10 @@ public class MainActivity extends AppCompatActivity {
         }
         String imagemBase64 = null;
         if(imagemSelecionada != null){
+            Bitmap imagemReduzida =
+                    reduzirImagem(imagemSelecionada);
             imagemBase64 =
-                    bitmapParaBase64(
-                            imagemSelecionada
-                    );
+                    bitmapParaBase64(imagemReduzida);
         }
         MensagemEntity mensagemEntity =
                 new MensagemEntity(
