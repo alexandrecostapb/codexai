@@ -125,6 +125,25 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <!-- botão sobre-->
+        <ImageButton
+            android:id="@+id/btnSobre"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_botao"
+            android:src="@drawable/baseline_info_24"
+            app:tint="#FFFFFF"
+            android:padding="14dp"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:contentDescription="Informações sobre o app"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_min="48dp"
+            app:layout_constraintHeight_min="48dp"
+            android:layout_margin="12dp"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Menu lateral (Drawer) -->

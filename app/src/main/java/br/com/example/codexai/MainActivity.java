@@ -53,6 +53,7 @@ import com.google.mlkit.vision.common.InputImage;
 
 public class MainActivity extends AppCompatActivity {
     private ImageButton btnHistorico;
+    private ImageButton btnSobre;
     private LinearLayout menuHistorico;
     private ImageButton enviarButton;
     private ImageButton imagemButton;
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         // 2. LINK DAS VIEWS PRIMEIRO
 
         btnHistorico = findViewById(R.id.btnHistorico);
+        btnSobre = findViewById(R.id.btnSobre);
         menuHistorico = findViewById(R.id.menu_do_historico);
         enviarButton = findViewById(R.id.enviarButton);
         imagemButton = findViewById(R.id.imagemButton);
@@ -210,6 +212,10 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
+        });
+        btnSobre.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, Sobre.class);
+            startActivity(intent);
         });
 
         imagemButton.setOnClickListener(v -> escolherImagem());
