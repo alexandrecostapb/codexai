@@ -283,15 +283,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Bitmap reduzirImagem(Bitmap original) {
-        int largura = 800;
-        int altura = (int)
-                (((float) original.getHeight()
-                        / original.getWidth())
-                        * largura);
+        int larguraOriginal = original.getWidth();
+        int alturaOriginal = original.getHeight();
+        int novaLargura;
+        int novaAltura;
+        if (larguraOriginal >= alturaOriginal) {
+            novaLargura = 768;
+            novaAltura = (alturaOriginal * 768) / larguraOriginal;
+        } else {
+            novaAltura = 768;
+            novaLargura = (larguraOriginal * 768) / alturaOriginal;
+        }
         return Bitmap.createScaledBitmap(
                 original,
-                largura,
-                altura,
+                novaLargura,
+                novaAltura,
                 true
         );
     }
@@ -464,25 +470,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void enviarMensagem() {
-        if(conversaAtual == null){
-            novoChat();
-        }
         String textoDigitado = promptEditText.getText().toString().trim();
         if (textoDigitado.isEmpty() && imagemSelecionada == null) {
             Toast.makeText(this, "Digite algo ou selecione uma imagem", Toast.LENGTH_SHORT).show();
             return;
+        }
+        if (conversaAtual == null) {
+            novoChat();
         }
         if (imagemSelecionada != null) {
             mensagens.add(new Mensagem(imagemSelecionada, textoDigitado, true));
         } else {
             mensagens.add(new Mensagem(textoDigitado, true));
         }
+        Bitmap imagemReduzida = null;
         String imagemBase64 = null;
         if(imagemSelecionada != null){
-            Bitmap imagemReduzida =
-                    reduzirImagem(imagemSelecionada);
-            imagemBase64 =
-                    bitmapParaBase64(imagemReduzida);
+            imagemReduzida = reduzirImagem(imagemSelecionada);
+            imagemBase64 = bitmapParaBase64(imagemReduzida);
         }
         MensagemEntity mensagemEntity =
                 new MensagemEntity(
@@ -496,7 +501,7 @@ public class MainActivity extends AppCompatActivity {
                 .inserir(mensagemEntity);
         mensagemAdapter.notifyItemInserted(mensagens.size() - 1);
         mensagemRecyclerView.scrollToPosition(mensagens.size() - 1);
-        enviarParaIA(textoDigitado, imagemSelecionada);
+        enviarParaIA(textoDigitado, imagemReduzida);
         imagemPreview.setVisibility(View.GONE);
         imagemSelecionada = null;
         promptEditText.setText("");
