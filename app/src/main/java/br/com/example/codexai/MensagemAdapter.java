@@ -78,11 +78,13 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
             markwon.setMarkdown(holder.texto, msg.getTexto());
         }
 
-        //ao pressionar a mensagem aparece para poder edita-la
+        //ao clicar na imagem para edita-la
         holder.itemView.setOnLongClickListener(v -> {
 
             if(msg.isUsuario()){
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(context);
 
                 EditText editText = new EditText(context);
                 editText.setText(msg.getTexto());
@@ -91,13 +93,13 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
                 builder.setView(editText);
 
                 builder.setPositiveButton("Salvar", (dialog, which) -> {
-
                     String novoTexto = editText.getText().toString();
-
                     msg.setTexto(novoTexto);
                     notifyItemChanged(position);
-                    ((MainActivity) context).editarMensagem(msg.getId(), novoTexto);
+
+                    ((MainActivity) context).editarMensagem(msg.getId(),novoTexto);
                 });
+
                 builder.setNegativeButton("Cancelar", null);
                 builder.show();
             }

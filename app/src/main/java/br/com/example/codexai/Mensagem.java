@@ -16,19 +16,17 @@ public class Mensagem {
         this.imagem = imagem;
         this.usuario = usuario;
     }
-
-    // Novo construtor para imagem + texto (com adicao do id)
     public Mensagem(Bitmap imagem, String texto, boolean usuario){
         this.imagem = imagem;
         this.texto = texto;
         this.usuario = usuario;
     }
-
-    public Mensagem(int id, String texto, Bitmap imagem, boolean usuario) {
-        this.id = id;
-        this.texto = texto;
+    // Novo construtor para imagem + texto (com adicao do id)
+    public Mensagem(Bitmap imagem, String texto, boolean usuario, int id){
         this.imagem = imagem;
+        this.texto = texto;
         this.usuario = usuario;
+        this.id = id;
     }
 
     public int getId() {
@@ -38,6 +36,7 @@ public class Mensagem {
     public void setId(int id) {
         this.id = id;
     }
+
     public String getTexto(){ return texto; }
     public void setTexto(String texto){ this.texto = texto; }
 

@@ -403,21 +403,24 @@ public class MainActivity extends AppCompatActivity {
                                 0,
                                 bytes.length
                         );
-                mensagens.add(
-                        new Mensagem(
-                                msg.getId(),
-                                msg.getTexto(),
-                                bitmap,
-                                msg.isUsuario()
-                        )
+                Mensagem mensagem = new Mensagem(
+                        bitmap,
+                        msg.getTexto(),
+                        msg.isUsuario()
                 );
+
+                mensagem.setId(msg.getId());
+
+                mensagens.add(mensagem);
             }else{
-                mensagens.add(
-                        new Mensagem(
-                                msg.getTexto(),
-                                msg.isUsuario()
-                        )
+                Mensagem mensagem = new Mensagem(
+                        msg.getTexto(),
+                        msg.isUsuario()
                 );
+
+                mensagem.setId(msg.getId());
+
+                mensagens.add(mensagem);
             }
         }
         mensagemAdapter = new MensagemAdapter(
@@ -498,6 +501,9 @@ public class MainActivity extends AppCompatActivity {
         imagemSelecionada = null;
         promptEditText.setText("");
     }
+    public void editarMensagem(int id, String novoTexto){
+        bancoDeDados.mensagemDao().atualizarMensagem(id, novoTexto);
+    }
 
     private void enviarParaIA(String texto, Bitmap imagem) {
         if (enviando) return;
@@ -556,10 +562,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-//para editar a mensagem ja enviada
-public void editarMensagem(int id, String novoTexto){
-    bancoDeDados.mensagemDao().atualizarMensagem(id, novoTexto);
-}
 
     @Override
     protected void onPause() {
