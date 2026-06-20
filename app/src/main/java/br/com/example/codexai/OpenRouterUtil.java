@@ -18,7 +18,7 @@ import okhttp3.Response;
 
 
 public class OpenRouterUtil {
-    private static final String API_KEY = "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"; // Aqui você insere sua própria API
+    private static final String API_KEY = ""; // Aqui você insere sua própria API
     private static final String BASE_URL = "https://openrouter.ai/api/v1/chat/completions"; // URL padrão da API
     private static final String MODEL = "openrouter/free"; // Aqui você insere o nome da IA que vai ser utilizada
 
