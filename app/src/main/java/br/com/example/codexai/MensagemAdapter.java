@@ -1,8 +1,10 @@
 package br.com.example.codexai;
 
+import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import io.noties.markwon.Markwon;
@@ -75,6 +77,32 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
             holder.imagem.setVisibility(View.GONE);
             markwon.setMarkdown(holder.texto, msg.getTexto());
         }
+
+        //ao pressionar a mensagem aparece para poder edita-la
+        holder.itemView.setOnLongClickListener(v -> {
+
+            if(msg.isUsuario()){
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                EditText editText = new EditText(context);
+                editText.setText(msg.getTexto());
+
+                builder.setTitle("Editar mensagem");
+                builder.setView(editText);
+
+                builder.setPositiveButton("Salvar", (dialog, which) -> {
+
+                    String novoTexto = editText.getText().toString();
+
+                    msg.setTexto(novoTexto);
+                    notifyItemChanged(position);
+                    ((MainActivity) context).editarMensagem(msg.getId(), novoTexto);
+                });
+                builder.setNegativeButton("Cancelar", null);
+                builder.show();
+            }
+            return true;
+        });
     }
 
     @Override

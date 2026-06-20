@@ -12,6 +12,9 @@ public interface MensagemDao {
     @Insert
     void inserir(MensagemEntity mensagem);
 
+    //adicionei para poder editar a mensagem ja enviada
+    @Query("UPDATE mensagens SET texto = :novoTexto WHERE id = :id")
+    void atualizarMensagem(int id, String novoTexto);
     @Query("SELECT * FROM mensagens WHERE conversa_id = :conversaId")
     List<MensagemEntity> buscarMensagens(int conversaId);
 

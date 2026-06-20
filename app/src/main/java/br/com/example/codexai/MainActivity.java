@@ -13,7 +13,6 @@ import android.provider.MediaStore;
 
 import android.util.Base64;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -21,13 +20,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,10 +41,6 @@ import java.util.List;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.mlkit.vision.text.TextRecognition;
-import com.google.mlkit.vision.text.Text;
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
-import com.google.mlkit.vision.common.InputImage;
 
 public class MainActivity extends AppCompatActivity {
     private ImageButton btnHistorico;
@@ -204,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
         String mensagemInicial =
                 "Olá, eu sou o CodexAI!\n" +
                         "Uma IA criada para te ajudar a aprender programação de forma simples.\n" +
-                        "Pode me perguntar qualquer coisa!";
+                        "Pode me perguntar qualquer coisa, programador!";
 
         mensagens.add(new Mensagem(mensagemInicial, false));
         mensagemAdapter = new MensagemAdapter(mensagens, this);
@@ -414,8 +405,9 @@ public class MainActivity extends AppCompatActivity {
                         );
                 mensagens.add(
                         new Mensagem(
-                                bitmap,
+                                msg.getId(),
                                 msg.getTexto(),
+                                bitmap,
                                 msg.isUsuario()
                         )
                 );
@@ -564,6 +556,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+//para editar a mensagem ja enviada
+public void editarMensagem(int id, String novoTexto){
+    bancoDeDados.mensagemDao().atualizarMensagem(id, novoTexto);
+}
 
     @Override
     protected void onPause() {
