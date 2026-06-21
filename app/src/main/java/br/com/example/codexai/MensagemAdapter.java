@@ -108,7 +108,6 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
             markwon.setMarkdown(holder.texto, msg.getTexto());
         }
 
-
         //para editar apenas mensagem do usuario
         if(msg.isUsuario()){
 

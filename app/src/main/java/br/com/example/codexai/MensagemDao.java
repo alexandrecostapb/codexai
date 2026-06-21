@@ -24,5 +24,4 @@ public interface MensagemDao {
 
     @Query("DELETE FROM mensagens")
     void removerTodas();
-
 }

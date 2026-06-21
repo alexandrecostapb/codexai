@@ -16,7 +16,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-
 public class OpenRouterUtil {
     private static final String API_KEY = null; // Aqui você insere sua própria API
     private static final String BASE_URL = "https://openrouter.ai/api/v1/chat/completions"; // URL padrão da API

@@ -501,7 +501,6 @@ public class MainActivity extends AppCompatActivity {
         imagemSelecionada = null;
         promptEditText.setText("");
     }
-
     //metodo editar a ultima mensagem
     public void editarUltimaMensagem(int idMensagemUsuario,String novoTexto){
 

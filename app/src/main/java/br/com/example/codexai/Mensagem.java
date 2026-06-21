@@ -11,7 +11,6 @@ public class Mensagem {
         this.texto = texto;
         this.usuario = usuario;
     }
-
     public Mensagem(Bitmap imagem, boolean usuario){
         this.imagem = imagem;
         this.usuario = usuario;
