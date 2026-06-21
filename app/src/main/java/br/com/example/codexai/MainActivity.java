@@ -501,8 +501,20 @@ public class MainActivity extends AppCompatActivity {
         imagemSelecionada = null;
         promptEditText.setText("");
     }
-    public void editarMensagem(int id, String novoTexto){
-        bancoDeDados.mensagemDao().atualizarMensagem(id, novoTexto);
+
+    //metodo editar a ultima mensagem
+    public void editarUltimaMensagem(int idMensagemUsuario,String novoTexto){
+
+        bancoDeDados.mensagemDao().atualizarMensagem(idMensagemUsuario, novoTexto);
+
+        if(mensagens.size() >= 2){
+            Mensagem ultimaMensagem = mensagens.get(mensagens.size() - 1);
+            if(!ultimaMensagem.isUsuario()){
+                mensagens.remove(mensagens.size() - 1);
+                mensagemAdapter.notifyItemRemoved(mensagens.size());
+            }
+        }
+        enviarParaIA(novoTexto, null);
     }
 
     private void enviarParaIA(String texto, Bitmap imagem) {

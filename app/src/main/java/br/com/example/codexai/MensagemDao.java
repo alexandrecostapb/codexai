@@ -13,8 +13,11 @@ public interface MensagemDao {
     @Insert
     void inserir(MensagemEntity mensagem);
 
+    //atualizar a ultima mensagem enviada pelo usuario
     @Query("UPDATE mensagens SET texto = :novoTexto WHERE id = :id")
     void atualizarMensagem(int id, String novoTexto);
+    @Query("DELETE FROM mensagens WHERE id = :id")
+    void removerPorId(int id);
 
     @Query("SELECT * FROM mensagens WHERE conversa_id = :conversaId")
     List<MensagemEntity> buscarMensagens(int conversaId);

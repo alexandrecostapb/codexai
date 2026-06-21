@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import io.noties.markwon.Markwon;
 import android.content.Context;
+import android.widget.Toast;
 
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,6 +61,35 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
         return new ViewHolder(view);
     }
 
+    //para abrir o dialog de ediçao de mensagem
+    private void abrirDialogEdicao(Mensagem msg, int position){
+
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(context);
+
+        EditText editText = new EditText(context);
+        editText.setText(msg.getTexto());
+
+        builder.setTitle("Editar mensagem");
+        builder.setView(editText);
+
+        builder.setPositiveButton("Salvar", (dialog, which) -> {
+
+            String novoTexto = editText.getText().toString();
+
+            msg.setTexto(novoTexto);
+            notifyItemChanged(position);
+
+            ((MainActivity) context)
+                    .editarUltimaMensagem(
+                            msg.getId(),
+                            novoTexto
+                    );
+        });
+
+        builder.setNegativeButton("Cancelar", null);
+        builder.show();
+    }
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
         Mensagem msg = mensagens.get(position);
@@ -78,33 +108,38 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
             markwon.setMarkdown(holder.texto, msg.getTexto());
         }
 
-        //ao clicar na imagem para edita-la
-        holder.itemView.setOnLongClickListener(v -> {
 
-            if(msg.isUsuario()){
+        //para editar apenas mensagem do usuario
+        if(msg.isUsuario()){
 
-                AlertDialog.Builder builder =
-                        new AlertDialog.Builder(context);
+            boolean ultimaMensagemUsuario = true;
 
-                EditText editText = new EditText(context);
-                editText.setText(msg.getTexto());
+            for(int i = position + 1; i < mensagens.size(); i++){
+                if(mensagens.get(i).isUsuario()){
+                    ultimaMensagemUsuario = false;
+                    break;
+                }
+            }
 
-                builder.setTitle("Editar mensagem");
-                builder.setView(editText);
+            if(ultimaMensagemUsuario){
 
-                builder.setPositiveButton("Salvar", (dialog, which) -> {
-                    String novoTexto = editText.getText().toString();
-                    msg.setTexto(novoTexto);
-                    notifyItemChanged(position);
-
-                    ((MainActivity) context).editarMensagem(msg.getId(),novoTexto);
+                holder.texto.setOnLongClickListener(v -> {
+                    abrirDialogEdicao(msg, position);
+                    return true;
                 });
 
-                builder.setNegativeButton("Cancelar", null);
-                builder.show();
+                holder.imagem.setOnLongClickListener(v -> {
+                    abrirDialogEdicao(msg, position);
+                    return true;
+                });
+
+            } else {
+
+                holder.texto.setOnLongClickListener(null);
+                holder.imagem.setOnLongClickListener(null);
+
             }
-            return true;
-        });
+        }
     }
 
     @Override
