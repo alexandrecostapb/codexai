@@ -537,7 +537,7 @@ public class MainActivity extends AppCompatActivity {
             }
             listaParaIA.add(0, m);
             contador++;
-            if (contador == 10) {
+            if (contador == 5) {
                 break;
             }
         }
