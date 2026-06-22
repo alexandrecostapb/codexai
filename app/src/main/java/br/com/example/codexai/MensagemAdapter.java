@@ -59,6 +59,7 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
                 new AlertDialog.Builder(context);
         EditText editText = new EditText(context);
         editText.setText(msg.getTexto());
+        editText.setTextColor(android.graphics.Color.parseColor("#FFFFFF"));
         builder.setTitle("Editar mensagem");
         builder.setView(editText);
         builder.setPositiveButton("Salvar", (dialog, which) -> {
@@ -75,6 +76,13 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
         dialog.show();
         dialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_background);
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(android.graphics.Color.parseColor("#FFFFFF"));
+        int titleId = context.getResources().getIdentifier("alertTitle", "id", "android");
+        if (titleId > 0) {
+            TextView titleView = dialog.findViewById(titleId);
+            if (titleView != null) {
+                titleView.setTextColor(android.graphics.Color.parseColor("#FFFFFF")); // Título branco!
+            }
+        }
     }
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){

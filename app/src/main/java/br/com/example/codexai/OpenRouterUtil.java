@@ -35,7 +35,11 @@ public class OpenRouterUtil {
             JSONArray messagesArray = new JSONArray();
             JSONObject system = new JSONObject();
             system.put("role", "system");
-            system.put("content", Prompt.systemPrompt);
+            system.put("content",
+                    "Você é o CodexAI, uma IA que ajuda estudantes a aprender programação. " +
+                            "Responda sempre em português, de forma clara, didática e objetiva. \n" +
+                            "Não repita apresentações ou saudações." //colocar a mensagem incial da ia depois
+            );
 
             messagesArray.put(system);
 
