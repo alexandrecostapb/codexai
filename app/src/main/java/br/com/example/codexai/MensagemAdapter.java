@@ -10,18 +10,11 @@ import android.widget.TextView;
 import io.noties.markwon.Markwon;
 import android.content.Context;
 import android.widget.Toast;
-
-
 import androidx.recyclerview.widget.RecyclerView;
-
-
 import java.util.ArrayList;
 
-
 public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHolder> {
-
     private ArrayList<Mensagem> mensagens;
-
     private static final int TIPO_USUARIO = 1;
     private static final int TIPO_IA = 2;
     private final Markwon markwon;
@@ -32,7 +25,6 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
         this.context = context;
         this.markwon = Markwon.create(context); // inicializa Markwon para Markdown
     }
-
     public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView texto;
         ImageView imagem;
@@ -63,32 +55,26 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
 
     //para abrir o dialog de ediçao de mensagem
     private void abrirDialogEdicao(Mensagem msg, int position){
-
         AlertDialog.Builder builder =
                 new AlertDialog.Builder(context);
-
         EditText editText = new EditText(context);
         editText.setText(msg.getTexto());
-
         builder.setTitle("Editar mensagem");
         builder.setView(editText);
-
         builder.setPositiveButton("Salvar", (dialog, which) -> {
-
             String novoTexto = editText.getText().toString();
-
             msg.setTexto(novoTexto);
             notifyItemChanged(position);
-
             ((MainActivity) context)
                     .editarUltimaMensagem(
                             msg.getId(),
                             novoTexto
                     );
         });
-
-        builder.setNegativeButton("Cancelar", null);
-        builder.show();
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_background);
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(android.graphics.Color.parseColor("#FFFFFF"));
     }
     @Override
     public void onBindViewHolder(ViewHolder holder, int position){
@@ -110,9 +96,7 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
 
         //para editar apenas mensagem do usuario
         if(msg.isUsuario()){
-
             boolean ultimaMensagemUsuario = true;
-
             for(int i = position + 1; i < mensagens.size(); i++){
                 if(mensagens.get(i).isUsuario()){
                     ultimaMensagemUsuario = false;
@@ -121,26 +105,20 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
             }
 
             if(ultimaMensagemUsuario){
-
                 holder.texto.setOnLongClickListener(v -> {
                     abrirDialogEdicao(msg, position);
                     return true;
                 });
-
                 holder.imagem.setOnLongClickListener(v -> {
                     abrirDialogEdicao(msg, position);
                     return true;
                 });
-
             } else {
-
                 holder.texto.setOnLongClickListener(null);
                 holder.imagem.setOnLongClickListener(null);
-
             }
         }
     }
-
     @Override
     public int getItemCount(){
         return mensagens.size();
