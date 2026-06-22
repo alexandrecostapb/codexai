@@ -14,7 +14,7 @@ import okhttp3.Response;
 
 
 public class OpenRouterUtil {
-    private static final String POE_API_KEY = ""; // Aqui você insere sua própria API
+    private static final String API_KEY = ""; // Aqui você insere sua própria API
     private static final String BASE_URL = "https://openrouter.ai/api/v1/chat/completions"; // URL padrão da API
     private static final String MODEL = "openrouter/free"; // Aqui você insere o nome da IA que vai ser utilizada
 
@@ -35,11 +35,7 @@ public class OpenRouterUtil {
             JSONArray messagesArray = new JSONArray();
             JSONObject system = new JSONObject();
             system.put("role", "system");
-            system.put("content",
-                    "Você é o CodexAI, uma IA que ajuda estudantes a aprender programação. " +
-                            "Responda sempre em português, de forma clara, didática e objetiva. \n" +
-                            "Não repita apresentações ou saudações." //colocar a mensagem incial da ia depois
-            );
+            system.put("content", Prompt.systemPrompt);
 
             messagesArray.put(system);
 
@@ -102,7 +98,7 @@ public class OpenRouterUtil {
 
             Request request = new Request.Builder()
                     .url(BASE_URL)
-                    .addHeader("Authorization", "Bearer " + POE_API_KEY)
+                    .addHeader("Authorization", "Bearer " + API_KEY)
                     .addHeader("Content-Type", "application/json")
                     .addHeader("HTTP-Referer", "https://javacode.app")
                     .addHeader("X-Title", "JavaCode")
