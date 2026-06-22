@@ -1,0 +1,19 @@
+[33m88af693[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m remoção da API KEY.
+[33mc8ac3b7[m Criação do banco de dados local para salvar o histórico de conversas e views provisórias para rodar o aplicativo.
+[33m8d9eaff[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m criação das classes OpenRouterUtil, Mensagem, MensagemAdapter e ConsultarIA para fazer a comunicação e integração da IA ao código
+[33m814c4d7[m criação das classes OpenRouterUtil, Mensagem, MensagemAdapter e ConsultarIA para fazer a comunicação e integração da IA ao código
+[33mef00da8[m Criação dos layouts do sobre, histórico e chat com gradient e configuração da Splash
+[33mc56d9b5[m Limpeza do projeto
+[33m215e9b0[m Merge remote-tracking branch 'origin/master'
+[33m7636d87[m criação da variavel nome2 = "Kauã";
+[33m2bd38a1[m Merge remote-tracking branch 'origin/master'
+[33me4c8abe[m Mudança do valor variável nome para "Alexandre Costa"
+[33m7c14d01[m Mudança na variável nome
+[33mc77a937[m criação da variavel nome2 = "Kauã";
+[33m5ec2edb[m Merge remote-tracking branch 'origin/master'
+[33m21eb3f2[m Criação da variável nome = "Alexandre"
+[33m1dd4c9b[m Variável "nome1" adicionada
+[33m16725b5[m Variável "nome1" adicionada
+[33m2b82d19[m Primeias alterações de teste no projeto
+[33m536235b[m Segundo commit
+[33m71be181[m Primeiro commit
