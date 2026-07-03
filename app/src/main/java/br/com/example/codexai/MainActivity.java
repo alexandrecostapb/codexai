@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 1;
     private static final int GALERIA_REQUEST = 2;
     private static final int CAMERA_PERMISSION = 100;
+    private static final int LIMITE_CHATS = 5;
     private boolean enviando = false;
 
     @Override
@@ -223,7 +224,17 @@ public class MainActivity extends AppCompatActivity {
 
         imagemButton.setOnClickListener(v -> escolherImagem());
         enviarButton.setOnClickListener(v -> enviarMensagem());
-        btnNovoChat.setOnClickListener(v -> prepararNovoChat());
+        btnNovoChat.setOnClickListener(v -> {
+            if (conversaAtual == null && atingiuLimiteChats()) {
+                Toast.makeText(
+                        this,
+                        "Exclua um chat ou converse em um já criado.",
+                        Toast.LENGTH_LONG
+                ).show();
+                return;
+            }
+            prepararNovoChat();
+        });
     }
 
 
@@ -381,6 +392,10 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.closeDrawer(GravityCompat.START);
     }
 
+    private boolean atingiuLimiteChats() {
+        return bancoDeDados.conversaDao().listarTodas().size() >= LIMITE_CHATS;
+    }
+
     public void abrirConversa(Conversa conversa) {
         conversaAtual = conversa;
         mensagens = new ArrayList<>();
@@ -469,6 +484,17 @@ public class MainActivity extends AppCompatActivity {
         if (textoDigitado.isEmpty() && imagemSelecionada == null) {
             Toast.makeText(this, "Digite algo ou selecione uma imagem", Toast.LENGTH_SHORT).show();
             return;
+        }
+        if (conversaAtual == null) {
+            if (atingiuLimiteChats()) {
+                Toast.makeText(
+                        this,
+                        "Você atingiu o limite de 5 chats. Exclua um chat ou converse em um já criado.",
+                        Toast.LENGTH_LONG
+                ).show();
+                return;
+            }
+            novoChat();
         }
         if (conversaAtual == null) {
             novoChat();
