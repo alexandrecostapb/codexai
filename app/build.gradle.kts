@@ -45,6 +45,7 @@ dependencies {
     implementation("com.google.mlkit:text-recognition:16.0.1")
     implementation("io.noties.markwon:core:4.6.2")
     implementation("io.noties.markwon:html:4.6.2")
+    implementation("io.noties.markwon:ext-tables:4.6.2")
     implementation("com.google.android.material:material:1.12.0")
 
     val room_version = "2.6.1"

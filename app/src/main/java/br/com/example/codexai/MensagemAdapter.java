@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.tables.TablePlugin;
 import android.content.Context;
 import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +24,9 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
     public MensagemAdapter(ArrayList<Mensagem> mensagens, Context context){
         this.mensagens = mensagens;
         this.context = context;
-        this.markwon = Markwon.create(context); // inicializa Markwon para Markdown
+        this.markwon = Markwon.builder(context)
+                .usePlugin(TablePlugin.create(context))
+                .build();// inicializa Markwon para Markdown
     }
     public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView texto;
