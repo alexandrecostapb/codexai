@@ -528,17 +528,37 @@ public class MainActivity extends AppCompatActivity {
         promptEditText.setText("");
     }
     //metodo editar a ultima mensagem
-    public void editarUltimaMensagem(int idMensagemUsuario,String novoTexto){
+    public void editarUltimaMensagem(int idMensagemUsuario, String novoTexto) {
 
+        // Atualiza a mensagem do usuário no banco
         bancoDeDados.mensagemDao().atualizarMensagem(idMensagemUsuario, novoTexto);
 
-        if(mensagens.size() >= 2){
-            Mensagem ultimaMensagem = mensagens.get(mensagens.size() - 1);
-            if(!ultimaMensagem.isUsuario()){
+        // Atualiza a mensagem na lista
+        for (Mensagem m : mensagens) {
+            if (m.getId() == idMensagemUsuario) {
+                m.setTexto(novoTexto);
+                break;
+            }
+        }
+
+        // Remove a última resposta da IA da lista E do banco
+        if (mensagens.size() > 0) {
+            Mensagem ultima = mensagens.get(mensagens.size() - 1);
+
+            if (!ultima.isUsuario()) {
+
+                // Remove do banco
+                bancoDeDados.mensagemDao().removerPorId(ultima.getId());
+
+                // Remove da lista
                 mensagens.remove(mensagens.size() - 1);
                 mensagemAdapter.notifyItemRemoved(mensagens.size());
             }
         }
+
+        mensagemAdapter.notifyDataSetChanged();
+
+        // Gera uma nova resposta da IA
         enviarParaIA(novoTexto, null);
     }
 

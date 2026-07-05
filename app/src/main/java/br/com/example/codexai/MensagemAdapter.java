@@ -103,24 +103,21 @@ public class MensagemAdapter extends RecyclerView.Adapter<MensagemAdapter.ViewHo
         }
 
         //para editar apenas mensagem do usuario
-        if(msg.isUsuario()){
-            boolean ultimaMensagemUsuario = true;
-            for(int i = position + 1; i < mensagens.size(); i++){
-                if(mensagens.get(i).isUsuario()){
-                    ultimaMensagemUsuario = false;
-                    break;
-                }
-            }
+        if (msg.isUsuario()) {
 
-            if(ultimaMensagemUsuario){
+            boolean podeEditar = position == mensagens.size() - 2 && !mensagens.get(mensagens.size() - 1).isUsuario();
+
+            if (podeEditar) {
                 holder.texto.setOnLongClickListener(v -> {
                     abrirDialogEdicao(msg, position);
                     return true;
                 });
+
                 holder.imagem.setOnLongClickListener(v -> {
                     abrirDialogEdicao(msg, position);
                     return true;
                 });
+
             } else {
                 holder.texto.setOnLongClickListener(null);
                 holder.imagem.setOnLongClickListener(null);
