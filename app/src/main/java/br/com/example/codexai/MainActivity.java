@@ -243,6 +243,16 @@ public class MainActivity extends AppCompatActivity {
         //salvarConversas();
     }
 
+    private void rolarParaBaixo() {
+        mensagemRecyclerView.post(() -> {
+            if (mensagemAdapter.getItemCount() > 0) {
+                mensagemRecyclerView.smoothScrollToPosition(
+                        mensagemAdapter.getItemCount() - 1
+                );
+            }
+        });
+    }
+
     private void escolherImagem() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Selecionar imagem");
@@ -521,7 +531,7 @@ public class MainActivity extends AppCompatActivity {
                 .mensagemDao()
                 .inserir(mensagemEntity);
         mensagemAdapter.notifyItemInserted(mensagens.size() - 1);
-        mensagemRecyclerView.scrollToPosition(mensagens.size() - 1);
+        rolarParaBaixo();
         enviarParaIA(textoDigitado, imagemReduzida);
         imagemPreview.setVisibility(View.GONE);
         imagemSelecionada = null;
@@ -567,6 +577,7 @@ public class MainActivity extends AppCompatActivity {
         enviando = true;
         mensagens.add(new Mensagem("Pensando...", false));
         mensagemAdapter.notifyItemInserted(mensagens.size() - 1);
+        rolarParaBaixo();
         String base64Imagem = bitmapParaBase64(imagem);
         android.util.Log.d(
                 "IMG_TEST",
@@ -605,6 +616,7 @@ public class MainActivity extends AppCompatActivity {
                             .mensagemDao()
                             .inserir(msgIA);
                     mensagemAdapter.notifyItemChanged(mensagens.size() - 1);
+                    rolarParaBaixo();
                     enviando = false;
                 });
             }
@@ -614,6 +626,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     mensagens.set(mensagens.size() - 1, new Mensagem("Erro: " + erro, false));
                     mensagemAdapter.notifyItemChanged(mensagens.size() - 1);
+                    rolarParaBaixo();
                     enviando = false;
                 });
             }
