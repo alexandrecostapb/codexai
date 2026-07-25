@@ -78,7 +78,7 @@
                 android:id="@+id/textView3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="O CodexAI é um aplicativo mobile que utiliza inteligência artificial para ajudar usuários a entender códigos de programação de forma simples e rápida. Nele, o usuário pode inserir uma imagem do código ou enviar um trecho de código, e o aplicativo analisa e gera uma explicação clara sobre o que aquele código faz, facilitando o aprendizado para estudantes e iniciantes em programação."
+                android:text="O ClareAI é um aplicativo mobile que utiliza inteligência artificial para ajudar usuários a entender códigos de programação de forma simples e rápida. Nele, o usuário pode inserir uma imagem do código ou enviar um trecho de código, e o aplicativo analisa e gera uma explicação clara sobre o que aquele código faz, facilitando o aprendizado para estudantes e iniciantes em programação."
                 android:textColor="#E8EBF0"
                 android:textSize="16sp"
                 android:fontFamily="@font/inter_regular"

@@ -9,12 +9,12 @@
     tools:context=".SplashActivity">
 
     <ImageView
-        android:id="@+id/codexaiLogo"
+        android:id="@+id/clareaiLogo"
         android:layout_width="236dp"
         android:layout_height="513dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/codexai_logo" />
+        app:srcCompat="@drawable/clareai_logo" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -25,7 +25,7 @@ public abstract class BancoDeDados extends RoomDatabase {
                             Room.databaseBuilder(
                                             context.getApplicationContext(),
                                             BancoDeDados.class,
-                                            "codexai_db"
+                                            "clareai_db"
                                     )
                                     .fallbackToDestructiveMigration()
                                     .allowMainThreadQueries()

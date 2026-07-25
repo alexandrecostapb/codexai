@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 5. CHAT RECYCLER
         String mensagemInicial =
-                "Olá, eu sou o CodexAI!\n" +
+                "Olá, eu sou o ClareAI!\n" +
                         "Uma IA criada para te ajudar a aprender programação de forma simples.\n" +
                         "Pode me perguntar qualquer coisa, programador!";
 
