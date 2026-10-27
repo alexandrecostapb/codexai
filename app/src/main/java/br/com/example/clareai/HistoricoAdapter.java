@@ -1,4 +1,4 @@
-package br.com.example.codexai;
+package br.com.example.clareai;
 
 import android.graphics.Color;
 import android.view.LayoutInflater;

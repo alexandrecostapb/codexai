@@ -1,4 +1,4 @@
-package br.com.example.codexai;
+package br.com.example.clareai;
 
 import android.content.Intent;
 import android.os.Bundle;

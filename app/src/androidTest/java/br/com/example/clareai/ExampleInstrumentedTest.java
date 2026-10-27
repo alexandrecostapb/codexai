@@ -1,4 +1,4 @@
-package br.com.example.codexai;
+package br.com.example.clareai;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("br.com.example.codexai", appContext.getPackageName());
+        assertEquals("br.com.example.clareai", appContext.getPackageName());
     }
 }

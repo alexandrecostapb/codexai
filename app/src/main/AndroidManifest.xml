@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CodexAI"
+        android:theme="@style/Theme.ClareAI"
         tools:targetApi="31">
         <activity
             android:name=".Sobre"
@@ -32,7 +32,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="br.com.example.codexai.fileprovider"
+            android:authorities="br.com.example.clareai.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

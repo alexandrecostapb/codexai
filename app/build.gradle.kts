@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "br.com.example.codexai"
+    namespace = "br.com.example.clareai"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "br.com.example.codexai"
+        applicationId = "br.com.example.clareai"
         minSdk = 31
         targetSdk = 34
         versionCode = 1

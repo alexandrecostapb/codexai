@@ -1,4 +1,4 @@
-package br.com.example.codexai;
+package br.com.example.clareai;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -352,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
             if (fotoArquivo != null) {
                 Uri fotoURI = FileProvider.getUriForFile(
                         this,
-                        "br.com.example.codexai.fileprovider",
+                        "br.com.example.clareai.fileprovider",
                         fotoArquivo
                 );
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, fotoURI);

@@ -1,4 +1,4 @@
-package br.com.example.codexai;
+package br.com.example.clareai;
 
 import android.app.AlertDialog;
 import android.view.LayoutInflater;

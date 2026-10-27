@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "CodexAI"
+rootProject.name = "ClareAI"
 include(":app")
  

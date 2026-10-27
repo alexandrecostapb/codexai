@@ -1,4 +1,4 @@
-package br.com.example.codexai;
+package br.com.example.clareai;
 
 public interface OnItemLongClickListener{
     void onLongClick(int position);

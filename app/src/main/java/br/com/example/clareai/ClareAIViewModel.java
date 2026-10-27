@@ -1,4 +1,4 @@
-package br.com.example.codexai;
+package br.com.example.clareai;
 
 import android.app.Application;
 
@@ -7,11 +7,11 @@ import androidx.lifecycle.AndroidViewModel;
 
 import java.util.List;
 
-public class CodexAIViewModel extends AndroidViewModel {
+public class ClareAIViewModel extends AndroidViewModel {
 
     private BancoDeDados banco;
 
-    public CodexAIViewModel(
+    public ClareAIViewModel(
             @NonNull Application application
     ) {
         super(application);

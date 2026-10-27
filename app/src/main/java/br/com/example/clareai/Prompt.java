@@ -1,4 +1,4 @@
-package br.com.example.codexai;
+package br.com.example.clareai;
 
 public class Prompt {
    public static String systemPrompt =

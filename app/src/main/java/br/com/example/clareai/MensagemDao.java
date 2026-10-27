@@ -1,4 +1,4 @@
-package br.com.example.codexai;
+package br.com.example.clareai;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
