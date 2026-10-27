@@ -1,6 +1,6 @@
 # ClareAI — convenções
 
-- Java (sem Kotlin), pacote `br.com.example.clareai`, minSdk 31, targetSdk 36.
+- Java (sem Kotlin), pacote `br.com.example.clareai`, minSdk 29, targetSdk 36.
 - Nomes de domínio em português (Mensagem, Conversa, enviar...); classes PascalCase, métodos camelCase,
   constantes UPPER_SNAKE_CASE, recursos snake_case. Textos de UI sempre em `res/values/strings.xml`.
 - Estado do chat só no `ClareAIViewModel`, alterado na main thread; banco e rede nunca na main thread

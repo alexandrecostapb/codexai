@@ -23,7 +23,7 @@ escopo a programação, orienta a explicar em vez de entregar a solução pronta
 ./gradlew assembleDebug        # gradlew.bat no Windows
 ./gradlew lint
 ./gradlew test                 # unitários (JUnit + MockWebServer, sem rede real)
-./gradlew connectedDebugAndroidTest   # Espresso, exige emulador/dispositivo (API 31+)
+./gradlew connectedDebugAndroidTest   # Espresso, exige emulador/dispositivo (API 29+)
 ```
 
 ## Arquitetura
@@ -32,4 +32,4 @@ escopo a programação, orienta a explicar em vez de entregar a solução pronta
 - `ClareAIViewModel` — estado do chat (sobrevive à rotação), Room e rede fora da main thread.
 - `OpenRouterUtil` — cliente OkHttp: retry em 429/503, erros tipados, cancelamento.
 - `Prompt` — prompt de sistema. `BancoDeDados`/DAOs/entidades — Room (histórico local).
-- Requisitos: minSdk 31, targetSdk 36, AGP 9.3.3, Gradle 9.5.
+- Requisitos: minSdk 29 (Android 10), targetSdk 36, AGP 9.3.3, Gradle 9.5.

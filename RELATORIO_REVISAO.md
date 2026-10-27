@@ -69,3 +69,7 @@ Backend/proxy para guardar a chave (a chave no APK é extraível); moderação d
 ## Plugins e skills
 
 Todos os plugins pedidos estavam instalados e ativos (`claude plugin list`, v2.1.310), sem necessidade de `/reload-plugins`. Porém **as skills deles não apareceram na lista de skills desta sessão**, então **não** usei `engineering:*`, `mattpocock-skills:*`, `design-skills:*`, `claude-security`, `code-simplifier`, `claude-android-qa-plugin` nem `claude-code-setup`. Apliquei os mesmos critérios manualmente (análise, testes, emulador via adb, README, CLAUDE.md). Não foram executados: code-simplifier, code-review por plugin e deploy-checklist formal.
+
+## Adendo: minSdk 31 → 29 (Android 10)
+
+Alterado em `app/build.gradle.kts`. Verificado: `assembleDebug`, `assembleRelease`, `lint` (0 erros) e 14 testes unitários passam; 5/5 Espresso passam no emulador Android10_Teste (API 29); smoke manual na API 29 (envio com rede real, rotação, layout com barra de 3 botões) sem crash (`docs/evidencias/android10-rotacao.png`). Não testados na API 29: câmera e galeria. Ressalva de segurança: muitos aparelhos com Android 10 não recebem mais correções de segurança.
