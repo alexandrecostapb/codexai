@@ -210,7 +210,9 @@ public class OpenRouterUtilTest {
     public void promptDeSistema_temRegrasDeEscopoEAntiInjecao() {
         assertTrue(Prompt.SYSTEM_PROMPT.contains("exclusivamente em programação"));
         assertTrue(Prompt.SYSTEM_PROMPT.contains("confidenciais"));
-        assertTrue(Prompt.SYSTEM_PROMPT.contains("Não entregue o programa completo corrigido"));
+        assertTrue(Prompt.SYSTEM_PROMPT.contains("fazer o aluno chegar sozinho à resposta"));
+        assertTrue(Prompt.SYSTEM_PROMPT.contains("NUNCA escreva o código que resolve o problema exato"));
+        assertTrue(Prompt.SYSTEM_PROMPT.contains("próximo passo concreto"));
         assertTrue(Prompt.SYSTEM_PROMPT.contains(Prompt.RECUSA_FORA_DE_ESCOPO));
         assertTrue(Prompt.SYSTEM_PROMPT.contains(Prompt.RECUSA_INADEQUADO));
         assertTrue(Prompt.SYSTEM_PROMPT.contains("188"));
