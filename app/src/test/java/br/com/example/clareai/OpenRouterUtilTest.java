@@ -87,7 +87,8 @@ public class OpenRouterUtilTest {
         assertEquals(OpenRouterUtil.MAX_TOKENS, corpo.getInt("max_tokens"));
         JSONArray msgs = corpo.getJSONArray("messages");
         assertEquals("system", msgs.getJSONObject(0).getString("role"));
-        assertEquals("O que é uma variável?", msgs.getJSONObject(1).getString("content"));
+        assertEquals("O que é uma variável?" + Prompt.LEMBRETE_PEDAGOGICO,
+                msgs.getJSONObject(1).getString("content"));
     }
 
     @Test
@@ -159,6 +160,13 @@ public class OpenRouterUtilTest {
     }
 
     @Test
+    public void respostaDeModeloDeModeracao_viraRespostaInvalida() throws Exception {
+        servidor.enqueue(new MockResponse().setBody(
+                "{\"choices\":[{\"message\":{\"content\":\"User Safety: safe\\nResponse Safety: safe\"}}]}"));
+        assertEquals(OpenRouterUtil.Erro.RESPOSTA_INVALIDA, enviar("oi").erro.get());
+    }
+
+    @Test
     public void servidorIndisponivel_viraErroDeConexao() throws Exception {
         servidor.shutdown();
         Resultado r = enviar("oi");
@@ -195,7 +203,19 @@ public class OpenRouterUtilTest {
         String relido = new JSONObject(corpo.toString())
                 .getJSONArray("messages").getJSONObject(1).getString("content");
 
-        assertEquals(codigo, relido);
+        assertEquals(codigo + Prompt.LEMBRETE_PEDAGOGICO, relido);
+    }
+
+    @Test
+    public void corpo_lembretePedagogicoVaiSoNaUltimaMensagemDoAluno() throws Exception {
+        JSONArray m = OpenRouterUtil.montarCorpo(Arrays.asList(
+                new Mensagem("primeira", true),
+                new Mensagem("resposta", false),
+                new Mensagem("me dá o código completo", true)), null).getJSONArray("messages");
+
+        assertEquals("primeira", m.getJSONObject(1).getString("content"));
+        assertEquals("resposta", m.getJSONObject(2).getString("content"));
+        assertTrue(m.getJSONObject(3).getString("content").endsWith(Prompt.LEMBRETE_PEDAGOGICO));
     }
 
     @Test

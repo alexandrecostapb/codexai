@@ -162,10 +162,31 @@ public class OpenRouterUtil {
                     .put("content", conteudo));
         }
 
+        acrescentarLembrete(messagesArray);
+
         return new JSONObject()
                 .put("model", MODEL)
                 .put("max_tokens", MAX_TOKENS)
                 .put("messages", messagesArray);
+    }
+
+    /**
+     * Modelos pequenos esquecem o prompt do sistema quando o aluno insiste. Repetimos a regra
+     * pedagógica no fim da última mensagem do aluno, só na requisição (não é salva nem exibida).
+     */
+    private static void acrescentarLembrete(JSONArray mensagens) throws JSONException {
+        for (int i = mensagens.length() - 1; i >= 0; i--) {
+            JSONObject m = mensagens.getJSONObject(i);
+            if (!"user".equals(m.getString("role"))) continue;
+            Object conteudo = m.get("content");
+            if (conteudo instanceof JSONArray) {
+                JSONObject texto = ((JSONArray) conteudo).getJSONObject(0);
+                texto.put("text", texto.getString("text") + Prompt.LEMBRETE_PEDAGOGICO);
+            } else {
+                m.put("content", conteudo + Prompt.LEMBRETE_PEDAGOGICO);
+            }
+            return;
+        }
     }
 
     static String extrairResposta(String json) throws JSONException {
@@ -176,6 +197,10 @@ public class OpenRouterUtil {
                 .optString("content", "");
         if (conteudo.trim().isEmpty()) {
             throw new JSONException("Resposta vazia");
+        }
+        // O roteador gratuito às vezes escolhe um modelo de moderação, que devolve só "User Safety: safe".
+        if (conteudo.trim().startsWith("User Safety:")) {
+            throw new JSONException("Resposta de modelo de moderação");
         }
         return conteudo;
     }

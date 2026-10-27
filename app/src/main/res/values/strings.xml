@@ -21,7 +21,7 @@
     <string name="erro_nao_autorizado">Não foi possível acessar a IA no momento. Avise o responsável pelo app.</string>
     <string name="erro_limite">A IA está muito ocupada agora. Aguarde um pouco e tente novamente.</string>
     <string name="erro_servidor">O serviço de IA está com problemas. Tente novamente em instantes.</string>
-    <string name="erro_resposta_invalida">Não consegui entender a resposta da IA. Tente reformular a pergunta.</string>
+    <string name="erro_resposta_invalida">A IA não conseguiu responder desta vez. Envie a pergunta novamente.</string>
     <string name="erro_generico">Algo deu errado. Tente novamente.</string>
     <string name="erro_imagem">Não foi possível carregar a imagem.</string>
 
