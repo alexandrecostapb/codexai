@@ -3,7 +3,7 @@
 **Nome (máx. 30):** ClareAI
 
 **Descrição curta (máx. 80):**
-Tire dúvidas de programação com uma IA que explica e te guia, sem dar a resposta pronta.
+Aprenda programação com uma IA que explica e guia, sem dar a resposta pronta.
 
 **Descrição completa (máx. 4000):**
 O ClareAI é um assistente de estudo para quem está aprendendo programação, feito para estudantes de cursos técnicos e do ensino médio.
