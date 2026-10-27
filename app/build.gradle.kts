@@ -18,7 +18,7 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "br.com.example.clareai"
+        applicationId = "br.com.alphacostalabs.clareai"
         minSdk = 29
         targetSdk = 36
         versionCode = 1
