@@ -1,11 +1,16 @@
 package br.com.example.clareai;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.text.InputFilter;
 import android.view.View;
 import android.widget.EditText;
@@ -17,6 +22,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
@@ -36,6 +42,7 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity {
     private static final String ESTADO_FOTO = "caminho_foto";
     private static final float ALPHA_DESABILITADO = 0.4f;
+    private static final int COR_OUVINDO = Color.parseColor("#FF5252");
 
     private ClareAIViewModel viewModel;
     private EditText promptEditText;
@@ -47,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
     private HistoricoAdapter historicoAdapter;
     private File arquivoFoto;
     private int totalMensagensRenderizado;
+    private ImageButton microfoneButton;
+    private SpeechRecognizer reconhecedor;
+    private boolean ouvindo;
+    private String textoAntesDeFalar = "";
 
     private final androidx.activity.result.ActivityResultLauncher<PickVisualMediaRequest> seletorGaleria =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
@@ -62,6 +73,15 @@ public class MainActivity extends AppCompatActivity {
                     arquivoFoto.delete();
                 }
                 arquivoFoto = null;
+            });
+
+    private final androidx.activity.result.ActivityResultLauncher<String> pedirMicrofone =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), concedida -> {
+                if (concedida) {
+                    comecarAOuvir();
+                } else {
+                    Toast.makeText(this, R.string.aviso_voz_permissao, Toast.LENGTH_LONG).show();
+                }
             });
 
     @Override
@@ -126,7 +146,10 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnSobre).setOnClickListener(v ->
                 startActivity(new Intent(this, Sobre.class)));
         findViewById(R.id.imagemButton).setOnClickListener(v -> escolherImagem());
+        microfoneButton = findViewById(R.id.microfoneButton);
+        microfoneButton.setOnClickListener(v -> alternarMicrofone());
         enviarButton.setOnClickListener(v -> {
+            pararDeOuvir();
             if (viewModel.enviar(promptEditText.getText().toString())) {
                 promptEditText.setText("");
             }
@@ -143,6 +166,117 @@ public class MainActivity extends AppCompatActivity {
                 viewModel.avisoLido();
             }
         });
+    }
+
+    // ---- Entrada por voz: o texto reconhecido só vai para o campo; quem envia é o aluno. ----
+
+    private void alternarMicrofone() {
+        if (ouvindo) {
+            pararDeOuvir();
+        } else if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+            Toast.makeText(this, R.string.aviso_voz_indisponivel, Toast.LENGTH_LONG).show();
+        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            pedirMicrofone.launch(Manifest.permission.RECORD_AUDIO);
+        } else {
+            comecarAOuvir();
+        }
+    }
+
+    private void comecarAOuvir() {
+        if (reconhecedor == null) {
+            reconhecedor = SpeechRecognizer.createSpeechRecognizer(this);
+            reconhecedor.setRecognitionListener(new OuvinteDeVoz());
+        }
+        textoAntesDeFalar = promptEditText.getText().toString();
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                .putExtra(RecognizerIntent.EXTRA_LANGUAGE, "pt-BR")
+                .putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+                .putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true);
+        definirOuvindo(true);
+        reconhecedor.startListening(intent);
+    }
+
+    private void pararDeOuvir() {
+        if (ouvindo && reconhecedor != null) reconhecedor.stopListening();
+        definirOuvindo(false);
+    }
+
+    private void definirOuvindo(boolean valor) {
+        ouvindo = valor;
+        microfoneButton.setColorFilter(valor ? COR_OUVINDO : Color.WHITE);
+        microfoneButton.setContentDescription(getString(
+                valor ? R.string.desc_microfone_parar : R.string.desc_microfone));
+        promptEditText.setHint(valor ? R.string.hint_ouvindo : R.string.hint_pergunta);
+    }
+
+    private void mostrarTextoFalado(Bundle resultados) {
+        java.util.ArrayList<String> opcoes =
+                resultados.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+        if (opcoes == null || opcoes.isEmpty()) return;
+        String falado = opcoes.get(0).trim();
+        if (falado.isEmpty()) return;
+        String base = textoAntesDeFalar.trim();
+        promptEditText.setText(base.isEmpty() ? falado : base + " " + falado);
+        promptEditText.setSelection(promptEditText.getText().length());
+    }
+
+    private class OuvinteDeVoz implements RecognitionListener {
+        @Override public void onPartialResults(Bundle parciais) { mostrarTextoFalado(parciais); }
+
+        @Override public void onResults(Bundle resultados) {
+            mostrarTextoFalado(resultados);
+            definirOuvindo(false);
+        }
+
+        @Override public void onError(int erro) {
+            definirOuvindo(false);
+            int mensagem;
+            switch (erro) {
+                case SpeechRecognizer.ERROR_NO_MATCH:
+                case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
+                    mensagem = R.string.aviso_voz_nao_ouvi;
+                    break;
+                case SpeechRecognizer.ERROR_NETWORK:
+                case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
+                    mensagem = R.string.aviso_voz_rede;
+                    break;
+                case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
+                    mensagem = R.string.aviso_voz_permissao;
+                    break;
+                case SpeechRecognizer.ERROR_CLIENT:
+                    return; // parada pedida pelo próprio app
+                default:
+                    mensagem = R.string.aviso_voz_erro;
+            }
+            Toast.makeText(MainActivity.this, mensagem, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override public void onReadyForSpeech(Bundle params) {}
+        @Override public void onBeginningOfSpeech() {}
+        @Override public void onRmsChanged(float rmsdB) {}
+        @Override public void onBufferReceived(byte[] buffer) {}
+        @Override public void onEndOfSpeech() {}
+        @Override public void onEvent(int eventType, Bundle params) {}
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (ouvindo) {
+            if (reconhecedor != null) reconhecedor.cancel();
+            definirOuvindo(false);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (reconhecedor != null) {
+            reconhecedor.destroy();
+            reconhecedor = null;
+        }
+        super.onDestroy();
     }
 
     @Override

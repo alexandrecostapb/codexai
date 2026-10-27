@@ -63,6 +63,8 @@ public class ChatFluxoTest {
     @Before
     public void setUp() {
         Context ctx = ApplicationProvider.getApplicationContext();
+        androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().getUiAutomation()
+                .grantRuntimePermission(ctx.getPackageName(), android.Manifest.permission.RECORD_AUDIO);
         BancoDeDados.getDatabase(ctx).clearAllTables();
         ia = new IaFalsa();
         OpenRouterUtil.setInstancia(ia);
@@ -144,6 +146,19 @@ public class ChatFluxoTest {
 
             onView(withText("Pergunta antes de girar")).check(matches(isDisplayed()));
             aguardarTexto(withText("Resposta simulada da IA"));
+        }
+    }
+
+    /** Sem ouvir ninguém o reconhecedor devolve erro; o app deve continuar usável e nada é enviado. */
+    @Test
+    public void microfone_tocarEPararNaoQuebraENaoEnvia() {
+        try (ActivityScenario<MainActivity> s = ActivityScenario.launch(MainActivity.class)) {
+            onView(withId(R.id.microfoneButton)).check(matches(isDisplayed()));
+            onView(withId(R.id.microfoneButton)).perform(clicarDireto());
+            onView(withId(R.id.microfoneButton)).perform(clicarDireto());
+
+            onView(withId(R.id.enviarButton)).check(matches(isEnabled()));
+            assertEquals(0, ia.chamadas);
         }
     }
 

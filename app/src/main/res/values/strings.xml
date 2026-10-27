@@ -43,6 +43,14 @@
     <string name="desc_fechar_historico">Fechar histórico</string>
     <string name="desc_selecionar_imagem">Selecionar imagem</string>
     <string name="desc_enviar">Enviar mensagem</string>
+    <string name="desc_microfone">Falar a pergunta</string>
+    <string name="desc_microfone_parar">Parar de ouvir</string>
+    <string name="hint_ouvindo">Ouvindo… pode falar</string>
+    <string name="aviso_voz_indisponivel">Este aparelho não tem reconhecimento de voz disponível.</string>
+    <string name="aviso_voz_permissao">Para falar a pergunta, permita o uso do microfone.</string>
+    <string name="aviso_voz_nao_ouvi">Não consegui ouvir. Toque no microfone e tente de novo.</string>
+    <string name="aviso_voz_rede">O reconhecimento de voz precisa de internet neste aparelho.</string>
+    <string name="aviso_voz_erro">Não foi possível usar o microfone agora. Tente de novo.</string>
     <string name="desc_sobre">Informações sobre o app</string>
     <string name="desc_imagem_anexada">Imagem anexada à pergunta</string>
 </resources>
