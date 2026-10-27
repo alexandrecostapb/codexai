@@ -222,6 +222,10 @@ public class ClareAIViewModel extends AndroidViewModel {
             avisar(R.string.aviso_texto_longo);
             return false;
         }
+        if (FiltroConteudo.temLinguagemInadequada(texto)) {
+            avisar(R.string.aviso_linguagem);
+            return false;
+        }
         if (enviando || carregando) {
             avisar(R.string.aviso_aguarde);
             return false;
@@ -281,6 +285,10 @@ public class ClareAIViewModel extends AndroidViewModel {
         }
         if (texto.length() > MAX_CARACTERES) {
             avisar(R.string.aviso_texto_longo);
+            return;
+        }
+        if (FiltroConteudo.temLinguagemInadequada(texto)) {
+            avisar(R.string.aviso_linguagem);
             return;
         }
         if (enviando || carregando || conversaAtual == null) {

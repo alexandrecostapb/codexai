@@ -10,6 +10,7 @@
     <!-- Avisos -->
     <string name="aviso_vazio">Digite algo ou selecione uma imagem.</string>
     <string name="aviso_texto_longo">Sua mensagem é muito longa. Divida em partes menores.</string>
+    <string name="aviso_linguagem">Sua mensagem contém linguagem inadequada. Reescreva a dúvida com respeito.</string>
     <string name="aviso_aguarde">Aguarde a resposta antes de enviar outra mensagem.</string>
     <string name="aviso_limite_chats">Você atingiu o limite de 5 chats. Exclua um chat ou converse em um já criado.</string>
 
