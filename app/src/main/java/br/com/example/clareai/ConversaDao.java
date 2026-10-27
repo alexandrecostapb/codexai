@@ -20,6 +20,12 @@ public interface ConversaDao {
     @Delete
     void remover(Conversa conversa);
 
+    @Query("SELECT COUNT(*) FROM conversas WHERE id = :id")
+    int contarPorId(int id);
+
+    @Query("SELECT COUNT(*) FROM conversas")
+    int contar();
+
     @Query("SELECT * FROM conversas ORDER BY id DESC")
     List<Conversa> listarTodas();
 }

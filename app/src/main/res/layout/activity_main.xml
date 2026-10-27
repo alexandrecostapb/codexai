@@ -26,7 +26,7 @@
             android:padding="14dp"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
-            android:contentDescription="Abrir histórico"
+            android:contentDescription="@string/desc_abrir_historico"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_margin="12dp"/>
@@ -46,6 +46,7 @@
         <!-- Preview da imagem -->
         <ImageView
             android:id="@+id/imagemPreview"
+            android:contentDescription="@string/desc_imagem_anexada"
             android:layout_width="90dp"
             android:layout_height="90dp"
             android:layout_marginStart="12dp"
@@ -75,7 +76,7 @@
             android:clickable="true"
             android:focusable="true"
             android:elevation="10dp"
-            android:contentDescription="Selecionar imagem"
+            android:contentDescription="@string/desc_selecionar_imagem"
             app:layout_constraintStart_toStartOf="@id/promptEditText"
             app:layout_constraintEnd_toEndOf="@id/promptEditText"
             app:layout_constraintHorizontal_bias="0.0"
@@ -99,7 +100,7 @@
             android:clickable="true"
             android:focusable="true"
             android:elevation="10dp"
-            android:contentDescription="Enviar mensagem"
+            android:contentDescription="@string/desc_enviar"
             app:layout_constraintEnd_toEndOf="@id/promptEditText"
             app:layout_constraintTop_toTopOf="@id/promptEditText"
             app:layout_constraintBottom_toBottomOf="@id/promptEditText"
@@ -110,7 +111,9 @@
             android:id="@+id/promptEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Pergunte qualquer coisa"
+            android:hint="@string/hint_pergunta"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine"
             android:textColorHint="#D4DAE2"
             android:textColor="#FFFFFF"
             android:minHeight="56dp"
@@ -139,7 +142,7 @@
             android:padding="14dp"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
-            android:contentDescription="Informações sobre o app"
+            android:contentDescription="@string/desc_sobre"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_min="48dp"
@@ -167,7 +170,7 @@
             app:tint="#FFFFFF"
             android:padding="14dp"
             android:scaleType="centerInside"
-            android:contentDescription="Fechar histórico"/>
+            android:contentDescription="@string/desc_fechar_historico"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnNovoChat"
@@ -175,7 +178,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_regular"
             android:layout_margin="18dp"
-            android:text="Novo Chat"
+            android:text="@string/novo_chat"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             app:icon="@drawable/icone_adicionar_chat"

@@ -1,7 +1,6 @@
 package br.com.example.clareai;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -31,14 +30,11 @@ public class Sobre extends AppCompatActivity {
         });
 
         btnHomeVoltar = findViewById(R.id.btnVoltar);
-        getWindow().setStatusBarColor(Color.parseColor("#0A111A"));
-        getWindow().setNavigationBarColor(Color.parseColor("#344468"));
 
         btnHomeVoltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
 

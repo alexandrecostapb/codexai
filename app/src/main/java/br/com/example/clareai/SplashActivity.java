@@ -12,6 +12,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class SplashActivity extends AppCompatActivity {
+    private static final long DURACAO_MS = 2000;
+
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Runnable abrirPrincipal = () -> {
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,14 +30,12 @@ public class SplashActivity extends AppCompatActivity {
             view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        handler.postDelayed(abrirPrincipal, DURACAO_MS);
+    }
 
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }, 2000);
+    @Override
+    protected void onDestroy() {
+        handler.removeCallbacks(abrirPrincipal);
+        super.onDestroy();
     }
 }

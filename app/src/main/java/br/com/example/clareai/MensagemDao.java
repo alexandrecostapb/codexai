@@ -3,7 +3,6 @@ package br.com.example.clareai;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.Update;
 
 import java.util.List;
 
@@ -11,17 +10,18 @@ import java.util.List;
 public interface MensagemDao {
 
     @Insert
-    void inserir(MensagemEntity mensagem);
+    long inserir(MensagemEntity mensagem);
 
     //atualizar a ultima mensagem enviada pelo usuario
     @Query("UPDATE mensagens SET texto = :novoTexto WHERE id = :id")
     void atualizarMensagem(int id, String novoTexto);
+
     @Query("DELETE FROM mensagens WHERE id = :id")
     void removerPorId(int id);
 
-    @Query("SELECT * FROM mensagens WHERE conversa_id = :conversaId")
-    List<MensagemEntity> buscarMensagens(int conversaId);
+    @Query("DELETE FROM mensagens WHERE conversa_id = :conversaId")
+    void removerPorConversa(int conversaId);
 
-    @Query("DELETE FROM mensagens")
-    void removerTodas();
+    @Query("SELECT * FROM mensagens WHERE conversa_id = :conversaId ORDER BY id")
+    List<MensagemEntity> buscarMensagens(int conversaId);
 }

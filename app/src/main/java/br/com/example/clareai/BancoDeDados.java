@@ -11,7 +11,8 @@ import androidx.room.RoomDatabase;
                 Conversa.class,
                 MensagemEntity.class
         },
-        version = 1
+        version = 1,
+        exportSchema = false
 )
 public abstract class BancoDeDados extends RoomDatabase {
     public abstract ConversaDao conversaDao();
@@ -27,8 +28,6 @@ public abstract class BancoDeDados extends RoomDatabase {
                                             BancoDeDados.class,
                                             "clareai_db"
                                     )
-                                    .fallbackToDestructiveMigration()
-                                    .allowMainThreadQueries()
                                     .build();
                 }
             }

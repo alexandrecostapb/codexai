@@ -9,11 +9,11 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.ViewHolder> {
 
-    private ArrayList<Conversa> conversas;
+    private List<Conversa> conversas;
     private OnConversaClickListener clickListener;
     private OnItemLongClickListener longClickListener;
     private int itemSelecionado = -1;
@@ -28,7 +28,7 @@ public class HistoricoAdapter extends RecyclerView.Adapter<HistoricoAdapter.View
     }
 
     public HistoricoAdapter(
-            ArrayList<Conversa> conversas,
+            List<Conversa> conversas,
             OnConversaClickListener clickListener,
             OnItemLongClickListener longClickListener
     ) {

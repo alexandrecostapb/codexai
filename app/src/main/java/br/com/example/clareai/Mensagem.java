@@ -1,18 +1,18 @@
 package br.com.example.clareai;
 
 import android.graphics.Bitmap;
+
 public class Mensagem {
     private int id;
     private String texto;
     private Bitmap imagem;
     private boolean usuario;
+    // Marcadores de mensagens locais que nunca vão para o banco nem para a IA
+    private boolean pendente;
+    private boolean erro;
 
     public Mensagem(String texto, boolean usuario){
         this.texto = texto;
-        this.usuario = usuario;
-    }
-    public Mensagem(Bitmap imagem, boolean usuario){
-        this.imagem = imagem;
         this.usuario = usuario;
     }
     public Mensagem(Bitmap imagem, String texto, boolean usuario){
@@ -20,12 +20,17 @@ public class Mensagem {
         this.texto = texto;
         this.usuario = usuario;
     }
-    // Novo construtor para imagem + texto (com adicao do id)
-    public Mensagem(Bitmap imagem, String texto, boolean usuario, int id){
-        this.imagem = imagem;
-        this.texto = texto;
-        this.usuario = usuario;
-        this.id = id;
+
+    public static Mensagem criarPendente(String texto) {
+        Mensagem m = new Mensagem(texto, false);
+        m.pendente = true;
+        return m;
+    }
+
+    public static Mensagem criarErro(String texto) {
+        Mensagem m = new Mensagem(texto, false);
+        m.erro = true;
+        return m;
     }
 
     public int getId() {
@@ -40,8 +45,10 @@ public class Mensagem {
     public void setTexto(String texto){ this.texto = texto; }
 
     public Bitmap getImagem(){ return imagem; }
-    public void setImagem(Bitmap imagem){ this.imagem = imagem; }
 
     public boolean isUsuario(){ return usuario; }
-    public void setUsuario(boolean usuario){ this.usuario = usuario; }
+
+    public boolean isPendente() { return pendente; }
+
+    public boolean isErro() { return erro; }
 }

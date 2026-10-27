@@ -1,3 +1,47 @@
 <resources>
     <string name="app_name">ClareAI</string>
+
+    <!-- Conversa -->
+    <string name="msg_boas_vindas">Olá, eu sou o ClareAI!\nUma IA criada para te ajudar a aprender programação de forma simples.\nPode me perguntar qualquer coisa, programador!</string>
+    <string name="msg_pensando">Pensando...</string>
+    <string name="hint_pergunta">Pergunte qualquer coisa</string>
+    <string name="novo_chat">Novo Chat</string>
+
+    <!-- Avisos -->
+    <string name="aviso_vazio">Digite algo ou selecione uma imagem.</string>
+    <string name="aviso_texto_longo">Sua mensagem é muito longa. Divida em partes menores.</string>
+    <string name="aviso_aguarde">Aguarde a resposta antes de enviar outra mensagem.</string>
+    <string name="aviso_limite_chats">Você atingiu o limite de 5 chats. Exclua um chat ou converse em um já criado.</string>
+
+    <!-- Erros da IA -->
+    <string name="erro_sem_chave">O app não está configurado para falar com a IA. Avise o responsável.</string>
+    <string name="erro_sem_conexao">Sem conexão com a internet. Verifique sua rede e tente novamente.</string>
+    <string name="erro_tempo_esgotado">A IA demorou demais para responder. Tente novamente.</string>
+    <string name="erro_nao_autorizado">Não foi possível acessar a IA no momento. Avise o responsável pelo app.</string>
+    <string name="erro_limite">A IA está muito ocupada agora. Aguarde um pouco e tente novamente.</string>
+    <string name="erro_servidor">O serviço de IA está com problemas. Tente novamente em instantes.</string>
+    <string name="erro_resposta_invalida">Não consegui entender a resposta da IA. Tente reformular a pergunta.</string>
+    <string name="erro_generico">Algo deu errado. Tente novamente.</string>
+    <string name="erro_imagem">Não foi possível carregar a imagem.</string>
+
+    <!-- Diálogos -->
+    <string name="titulo_selecionar_imagem">Selecionar imagem</string>
+    <string name="opcao_camera">Câmera</string>
+    <string name="opcao_galeria">Galeria</string>
+    <string name="titulo_renomear_chat">Renomear chat</string>
+    <string name="titulo_excluir_conversa">Excluir conversa</string>
+    <string name="mensagem_excluir_conversa">Deseja realmente excluir?</string>
+    <string name="titulo_editar_mensagem">Editar mensagem</string>
+    <string name="acao_salvar">Salvar</string>
+    <string name="acao_cancelar">Cancelar</string>
+    <string name="acao_sim">Sim</string>
+    <string name="acao_nao">Não</string>
+
+    <!-- Acessibilidade -->
+    <string name="desc_abrir_historico">Abrir histórico</string>
+    <string name="desc_fechar_historico">Fechar histórico</string>
+    <string name="desc_selecionar_imagem">Selecionar imagem</string>
+    <string name="desc_enviar">Enviar mensagem</string>
+    <string name="desc_sobre">Informações sobre o app</string>
+    <string name="desc_imagem_anexada">Imagem anexada à pergunta</string>
 </resources>
