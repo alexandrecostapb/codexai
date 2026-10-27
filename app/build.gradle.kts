@@ -13,6 +13,12 @@ val openRouterKey: String = localProps.getProperty("OPENROUTER_API_KEY")
     ?: System.getenv("OPENROUTER_API_KEY")
     ?: ""
 
+// Dados da chave de upload ficam em keystore.properties (não versionado).
+val keystoreProps = Properties().apply {
+    val arquivo = rootProject.file("keystore.properties")
+    if (arquivo.exists()) arquivo.inputStream().use { load(it) }
+}
+
 android {
     namespace = "br.com.example.clareai"
     compileSdk = 37
@@ -33,8 +39,20 @@ android {
         buildConfig = true
     }
 
+    signingConfigs {
+        if (keystoreProps.containsKey("storeFile")) {
+            create("release") {
+                storeFile = file(keystoreProps.getProperty("storeFile"))
+                storePassword = keystoreProps.getProperty("storePassword")
+                keyAlias = keystoreProps.getProperty("keyAlias")
+                keyPassword = keystoreProps.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfigs.findByName("release")?.let { signingConfig = it }
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

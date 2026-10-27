@@ -15,3 +15,8 @@
 local.properties
 REVISAO.md
 /REVISAO.md
+
+# Assinatura de release: nunca versionar
+keystore.properties
+*.jks
+*.keystore
