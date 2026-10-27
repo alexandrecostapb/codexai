@@ -122,7 +122,8 @@ public class OpenRouterUtil {
                         return;
                     }
                     String conteudo = extrairResposta(body.string());
-                    callback.onResponse(conteudo);
+                    callback.onResponse(FiltroResposta.limitarCodigo(
+                            conteudo, mensagens, base64Imagem != null));
                 } catch (JSONException e) {
                     callback.onError(Erro.RESPOSTA_INVALIDA);
                 } catch (IOException e) {
